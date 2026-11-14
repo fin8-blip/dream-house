@@ -6,182 +6,101 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Dream House — Mini Architect</title>
+<title>Dream House 3D — Walkthrough & Architect</title>
 <style>
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;overflow:hidden;background:#141b24;color:#eef3f8;
+  html,body{margin:0;height:100%;overflow:hidden;background:#0d1117;color:#eef3f8;
     font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
     -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
   #game{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
 
   /* ---------- TOPBAR ---------- */
   #topbar{position:fixed;top:10px;left:10px;right:10px;display:flex;align-items:center;gap:6px;
-    padding:7px 9px;background:rgba(22,31,42,.84);backdrop-filter:blur(12px);
-    border:1px solid rgba(255,255,255,.08);border-radius:16px;z-index:20;flex-wrap:nowrap}
+    padding:7px 11px;background:rgba(22,31,42,.88);backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.09);border-radius:16px;z-index:20}
   .brand{display:flex;align-items:baseline;gap:6px;font-weight:800;font-size:15px;letter-spacing:.2px;white-space:nowrap}
   .brand small{font-weight:600;opacity:.5;font-size:9px;letter-spacing:1.2px;text-transform:uppercase}
   .pill{padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-size:11.5px;font-weight:700;white-space:nowrap}
   .pill.money{background:rgba(255,180,84,.18);color:#ffcf8a}
-  .pill.money.low{background:rgba(255,90,90,.2);color:#ff9d9d}
   .spacer{flex:1}
-  .tbtn{border:0;background:rgba(255,255,255,.09);color:#eef3f8;width:34px;height:34px;border-radius:11px;
-    font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.15s}
+  .tbtn{border:0;background:rgba(255,255,255,.09);color:#eef3f8;height:34px;padding:0 12px;border-radius:11px;
+    font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.15s}
   .tbtn:hover{background:rgba(255,255,255,.18)}
-  .tbtn:disabled{opacity:.32;cursor:default}
-  .tbtn.primary{width:auto;padding:0 14px;background:linear-gradient(135deg,#ffb454,#ff8f3c);color:#231603;font-weight:800;font-size:12.5px}
-  .tbtn.primary:hover{filter:brightness(1.1)}
+  .tbtn.primary{background:linear-gradient(135deg,#ffb454,#ff8f3c);color:#231603;font-weight:800}
 
-  /* ---------- TASK PANEL ---------- */
-  #taskPanel{position:fixed;right:10px;top:66px;width:252px;z-index:18;display:none;
-    background:rgba(22,31,42,.9);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.09);
-    border-radius:16px;padding:12px;font-size:12px;max-height:56vh;overflow:auto}
-  #taskPanel h3{margin:0 0 3px;font-size:13.5px;color:#ffcf8a}
-  #taskPanel p{margin:0 0 9px;opacity:.62;font-size:11px;line-height:1.4}
-  .req{display:flex;align-items:center;gap:7px;padding:3px 0;opacity:.72}
-  .req.ok{opacity:1;color:#9ff0c4}
-  .req .dot{width:15px;height:15px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font-size:9px;flex:0 0 auto}
-  .req .cnt{margin-left:auto;opacity:.75;font-variant-numeric:tabular-nums}
-  .cleanbar{height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin:2px 0 10px}
-  .cleanbar i{display:block;height:100%;background:linear-gradient(90deg,#7fd1ae,#b6f09c);transition:width .25s}
-
-  /* ---------- PALETTE ---------- */
+  /* ---------- PALETTE (Architect Mode) ---------- */
   #palette{position:fixed;left:10px;right:10px;bottom:10px;z-index:20;display:flex;flex-direction:column;gap:7px;
-    background:rgba(22,31,42,.9);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09);
-    border-radius:18px;padding:8px}
+    background:rgba(22,31,42,.92);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.09);
+    border-radius:18px;padding:8px;transition:.25s}
+  #palette.hidden{transform:translateY(130px);opacity:0;pointer-events:none}
   #catRow,#itemRow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
   #catRow::-webkit-scrollbar,#itemRow::-webkit-scrollbar{display:none}
   .cat{flex:0 0 auto;border:1px solid transparent;background:rgba(255,255,255,.06);color:#c8d3df;
-    padding:6px 11px;border-radius:11px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;gap:5px;align-items:center;transition:.15s}
-  .cat:hover{background:rgba(255,255,255,.13)}
+    padding:6px 11px;border-radius:11px;font-size:11.5px;font-weight:700;cursor:pointer;display:flex;gap:5px;align-items:center}
   .cat.on{background:rgba(255,180,84,.2);border-color:rgba(255,180,84,.55);color:#ffd79a}
-  .item{flex:0 0 auto;width:70px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.05);
-    border-radius:13px;padding:6px 3px 5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;
-    color:#dce6f0;transition:.13s}
-  .item:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
+  .item{flex:0 0 auto;width:68px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.05);
+    border-radius:13px;padding:6px 3px 5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;color:#dce6f0}
   .item.on{border-color:#ffb454;background:rgba(255,180,84,.17);box-shadow:0 0 0 1px #ffb454 inset}
-  .item .ico{font-size:20px;line-height:1.1}
+  .item .ico{font-size:19px;line-height:1.1}
   .item .nm{font-size:9.5px;font-weight:700;text-align:center;line-height:1.15}
-  .item .cost{font-size:9px;opacity:.6;font-weight:700}
 
-  /* ---------- HINT ---------- */
-  #hint{position:fixed;left:14px;bottom:150px;z-index:15;font-size:11px;opacity:.4;pointer-events:none;
-    background:rgba(0,0,0,.35);padding:5px 10px;border-radius:9px}
+  /* ---------- CROSSHAIR & HUD 3D ---------- */
+  #crosshair{position:fixed;top:50%;left:50%;width:8px;height:8px;margin:-4px 0 0 -4px;
+    background:rgba(255,255,255,.75);border-radius:50%;pointer-events:none;z-index:15;display:none;
+    box-shadow:0 0 4px rgba(0,0,0,.6)}
+  #walkHint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:15;display:none;
+    background:rgba(15,23,36,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);
+    padding:8px 16px;border-radius:12px;font-size:12.5px;font-weight:600;text-align:center;pointer-events:none}
 
-  /* ---------- ZOOM CONTROLS ---------- */
-  #zoomCtl{position:fixed;right:12px;bottom:150px;z-index:19;display:flex;flex-direction:column;gap:6px}
-  #zoomCtl button{width:34px;height:34px;border-radius:11px;border:0;background:rgba(22,31,42,.85);color:#dfe8f1;
-    font-size:16px;font-weight:800;cursor:pointer;border:1px solid rgba(255,255,255,.1)}
+  /* ---------- MOBILE JOYPAD & CONTROLS ---------- */
+  #touchControls{position:fixed;inset:0;pointer-events:none;z-index:18;display:none}
+  .joystick-base{position:absolute;left:28px;bottom:28px;width:120px;height:120px;background:rgba(255,255,255,.08);
+    border:2px solid rgba(255,255,255,.15);border-radius:50%;pointer-events:auto;touch-action:none}
+  .joystick-thumb{position:absolute;top:35px;left:35px;width:50px;height:50px;background:rgba(255,180,84,.75);
+    border-radius:50%;transition:transform .05s}
+  .touch-btn{position:absolute;right:28px;bottom:28px;width:64px;height:64px;background:rgba(255,180,84,.85);
+    color:#231603;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;pointer-events:auto;
+    border:0;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 
   /* ---------- MODALS ---------- */
   .modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:14px;
-    background:rgba(7,11,16,.62);backdrop-filter:blur(7px)}
+    background:rgba(7,11,16,.68);backdrop-filter:blur(8px)}
   .modal.open{display:flex}
-  .card{width:min(700px,100%);max-height:90vh;overflow:auto;background:#1b2532;
-    border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:22px 22px 18px;
-    box-shadow:0 24px 80px rgba(0,0,0,.6)}
-  .card h1{margin:0;font-size:26px;letter-spacing:-.4px}
+  .card{width:min(520px,100%);background:#1b2532;border:1px solid rgba(255,255,255,.1);
+    border-radius:22px;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+  .card h1{margin:0 0 6px;font-size:24px}
   .card h1 span{color:#ffb454}
-  .card .sub{margin:5px 0 16px;opacity:.55;font-size:12.5px;line-height:1.5}
-  .nameRow{display:flex;align-items:center;gap:8px;font-size:12.5px;margin:0 0 16px;
-    background:rgba(255,255,255,.05);padding:8px 12px;border-radius:12px}
-  .nameRow b{color:#ffcf8a}
-  .g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-  .modeCard{text-align:left;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);
-    border-radius:15px;padding:13px;cursor:pointer;color:#e9f0f7;transition:.15s;font-family:inherit}
-  .modeCard:hover{background:rgba(255,255,255,.11);transform:translateY(-2px);border-color:rgba(255,180,84,.5)}
-  .modeCard .mcTitle{font-weight:800;font-size:13.5px;margin-bottom:3px}
-  .modeCard .mcDesc{font-size:11px;opacity:.6;line-height:1.4}
-  .modeCard .mcMeta{font-size:10.5px;font-weight:700;color:#ffcf8a;margin-top:6px}
-  .row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
-  .btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#eef3f8;
-    padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
-  .btn:hover{background:rgba(255,255,255,.14)}
-  .btn.primary{background:linear-gradient(135deg,#ffb454,#ff8f3c);color:#231603;border:0}
-  .btn.primary:hover{filter:brightness(1.08)}
-  .btn.ghost{background:transparent}
-  .btn:disabled{opacity:.4;cursor:default}
-
-  input.nameInput{flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.16);color:#fff;
-    padding:11px 13px;border-radius:12px;font-size:15px;font-weight:700;letter-spacing:.5px;outline:none;font-family:inherit}
+  .card .sub{margin:0 0 18px;opacity:.6;font-size:12.5px;line-height:1.5}
+  .row{display:flex;gap:8px;margin-top:16px}
+  .btn{border:0;background:linear-gradient(135deg,#ffb454,#ff8f3c);color:#231603;
+    padding:11px 18px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;width:100%}
+  input.nameInput{width:100%;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.16);color:#fff;
+    padding:12px 14px;border-radius:12px;font-size:15px;font-weight:700;outline:none}
   input.nameInput:focus{border-color:#ffb454}
-
-  .stars{font-size:44px;letter-spacing:6px;text-align:center;margin:6px 0 2px;color:#3d4a5a}
-  .stars .on{color:#ffc94f;text-shadow:0 0 22px rgba(255,201,79,.55)}
-  .scoreBig{text-align:center;font-size:34px;font-weight:900;color:#ffcf8a;letter-spacing:-1px}
-  .scoreLbl{text-align:center;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;opacity:.5;margin-bottom:12px}
-
-  table.lb{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
-  table.lb th{text-align:left;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;opacity:.45;padding:6px 8px;font-weight:700}
-  table.lb td{padding:7px 8px;border-top:1px solid rgba(255,255,255,.07)}
-  table.lb tr.me td{background:rgba(255,180,84,.12);color:#ffcf8a;font-weight:800}
-  table.lb td.sc{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
 
   #toast{position:fixed;left:50%;bottom:170px;transform:translate(-50%,14px);z-index:60;
     background:#22303f;border:1px solid rgba(255,255,255,.13);padding:9px 17px;border-radius:12px;
     font-size:12.5px;font-weight:700;opacity:0;pointer-events:none;transition:.22s;white-space:nowrap}
   #toast.on{opacity:1;transform:translate(-50%,0)}
 
-  @media(max-width:760px){
+  @media(max-width:640px){
     .brand small{display:none}
-    .brand{font-size:13px}
-    #taskPanel{width:172px;top:60px;padding:9px;font-size:10.5px;max-height:44vh}
-    #taskPanel p{display:none}
-    .item{width:60px}
-    .item .ico{font-size:17px}
-    .item .nm{font-size:8.5px}
-    #hint{display:none}
-    #zoomCtl{bottom:146px}
-    .g2{grid-template-columns:1fr}
-    .card{padding:18px 15px}
-    .card h1{font-size:21px}
-    #topbar{gap:4px;padding:6px 7px}
-    .tbtn{width:31px;height:31px;font-size:14px}
-    .pill{padding:3px 8px;font-size:10.5px}
-  }
-  @media(max-width:620px){
-    #modeLabel{display:none}
-  }
-  @media(max-width:520px){
-    .brand span{display:none}
-    #topbar{gap:3px}
-    .tbtn{width:29px;height:29px;font-size:13.5px}
-    .tbtn.primary{padding:0 10px;font-size:11.5px}
-  }
-  @media(max-width:430px){
-    #btnSave{display:none}
-    .brand{font-size:12px}
+    .tbtn{padding:0 8px;font-size:11.5px}
   }
 </style>
 </head>
 <body>
 <canvas id="game"></canvas>
+<div id="crosshair"></div>
+<div id="walkHint">Tekan <b>ESC</b> atau klik tombol Atas untuk keluar ke Mode Bangun</div>
 
 <div id="topbar">
-  <div class="brand">🏠 <span>Dream House</span><small>Mini Architect</small></div>
-  <div class="pill" id="modeLabel">Mode Bebas</div>
-  <div class="pill money" id="budgetLabel" style="display:none">🪙 0</div>
+  <div class="brand">🏠 <span>Dream House</span><small>3D HD</small></div>
+  <button class="tbtn primary" id="btnMode">🚶‍♂️ Jelajah 3D</button>
   <div class="spacer"></div>
-  <button class="tbtn" id="btnUndo" title="Urungkan (Ctrl+Z)">↶</button>
-  <button class="tbtn" id="btnRedo" title="Ulangi (Ctrl+Y)">↷</button>
-  <button class="tbtn" id="btnPhoto" title="Foto diorama">📷</button>
-  <button class="tbtn" id="btnSave" title="Simpan desain">💾</button>
-  <button class="tbtn primary" id="btnDone" style="display:none">Selesai</button>
-  <button class="tbtn" id="btnMenu" title="Menu">☰</button>
-</div>
-
-<div id="taskPanel">
-  <h3 id="taskTitle"></h3>
-  <p id="taskBrief"></p>
-  <div class="cleanbar"><i id="cleanFill" style="width:100%"></i></div>
-  <div id="taskReqs"></div>
-</div>
-
-<div id="hint">Klik menaruh · Drag menggambar · Klik kanan / 2 jari menggeser · Scroll zoom</div>
-
-<div id="zoomCtl">
-  <button id="zoomIn">+</button>
-  <button id="zoomOut">−</button>
-  <button id="zoomReset" title="Pusatkan">🎯</button>
+  <button class="tbtn" id="btnUndo" title="Undo">↶</button>
+  <button class="tbtn" id="btnPhoto" title="Foto">📷</button>
+  <button class="tbtn" id="btnReset" title="Reset">🗑️</button>
 </div>
 
 <div id="palette">
@@ -189,62 +108,21 @@
   <div id="itemRow"></div>
 </div>
 
-<!-- ============ MODAL: USERNAME ============ -->
-<div class="modal" id="nameModal">
-  <div class="card" style="max-width:420px">
-    <h1>Dream <span>House</span></h1>
-    <p class="sub">Mainan arsitektur mini. Susun rumah impianmu di atas papan petak.</p>
-    <p class="sub" style="margin-bottom:8px">Siapa namamu, arsitek?</p>
-    <div class="nameRow" style="background:none;padding:0">
-      <input class="nameInput" id="nameInput" maxlength="15" placeholder="Nama kamu (1–15 huruf)" autocomplete="off">
-    </div>
-    <div class="row">
-      <button class="btn primary" id="btnNameOk">Mulai Membangun</button>
-    </div>
+<div id="touchControls">
+  <div class="joystick-base" id="joyBase">
+    <div class="joystick-thumb" id="joyThumb"></div>
   </div>
+  <button class="touch-btn" id="touchAction">PASANG</button>
 </div>
 
-<!-- ============ MODAL: MENU ============ -->
-<div class="modal" id="menuModal">
+<div class="modal open" id="nameModal">
   <div class="card">
-    <h1>Dream <span>House</span></h1>
-    <p class="sub">Pilih mau membangun dengan bebas, atau terima tantangan dari klien.</p>
-    <div class="nameRow">
-      <span>Arsitek: <b id="menuName">-</b></span>
-      <button class="btn ghost" id="btnRename" style="margin-left:auto;padding:5px 11px;font-size:11px">Ganti Nama</button>
-    </div>
-    <div class="g2" id="modeGrid"></div>
-    <div class="row">
-      <button class="btn ghost" id="btnNewBoard">Papan Baru</button>
-      <button class="btn ghost" id="btnLeaderboard">🏆 Papan Peringkat</button>
-      <button class="btn primary" id="btnCloseMenu" style="margin-left:auto">Lanjut Membangun</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ MODAL: HASIL ============ -->
-<div class="modal" id="resultModal">
-  <div class="card" style="max-width:520px">
-    <h1 id="resultTitle">Hasil</h1>
-    <div class="stars" id="resultStars"></div>
-    <div class="scoreBig" id="resultScore">0</div>
-    <div class="scoreLbl">Skor Tantangan</div>
-    <div id="resultBody"></div>
-    <div class="row">
-      <button class="btn primary" id="btnResultAgain">Coba Lagi</button>
-      <button class="btn" id="btnResultMenu">Menu Utama</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ MODAL: LEADERBOARD ============ -->
-<div class="modal" id="lbModal">
-  <div class="card" style="max-width:560px">
-    <h1>Papan <span>Peringkat</span></h1>
-    <p class="sub">Top 10 skor Mode Tantangan.</p>
-    <div id="lbBody"></div>
-    <div class="row">
-      <button class="btn primary" id="btnLbClose" style="margin-left:auto">Tutup</button>
+    <h1>Dream <span>House 3D</span></h1>
+    <p class="sub">Bangun rumah impianmu dalam bentuk 3D HD, lalu masuk dan jalan-jalan di dalamnya!</p>
+    <p class="sub" style="margin-bottom:8px">Masukkan nama arsitek:</p>
+    <input class="nameInput" id="nameInput" maxlength="15" placeholder="Nama kamu..." autocomplete="off">
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="btnStart">Mulai Berkreasi</button>
     </div>
   </div>
 </div>
@@ -255,1483 +133,678 @@
 'use strict';
 
 /* =========================================================
-   1. CONFIG & CANVAS SETUP
+   1. CONFIG & SETUP 3D WEBGL HD
    ========================================================= */
-const SIZE = 14;          // papan 14 x 14 petak
-const TW = 64;            // lebar petak (layar)
-const TH = 32;            // tinggi petak (layar)
-const UNIT = 44;          // tinggi 1.0 unit objek (piksel)
-const MAX_UNDO = 80;
-
-const LS_USER = 'arcade_last_username';
-const LS_LB   = 'arcade_leaderboard';
-const LS_SAVE = 'dreamhouse_save_v1';
+const SIZE = 16;
+const WORLD_H = 8;
+const LS_USER = 'dreamhouse3D_user';
+const LS_SAVE = 'dreamhouse3D_save';
 
 const cvs = document.getElementById('game');
-const ctx = cvs.getContext('2d');
-let W = 0, H = 0, DPR = 1, time = 0;
+let gl = cvs.getContext('webgl', { antialias: true, alpha: false, preserveDrawingBuffer: true }) ||
+         cvs.getContext('experimental-webgl');
 
-const cam = { px: 0, py: 0, zoom: 1 };
-
+let W = 0, H = 0;
 function resize() {
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
-  W = cvs.clientWidth;
-  H = cvs.clientHeight;
-  cvs.width = Math.round(W * DPR);
-  cvs.height = Math.round(H * DPR);
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  resetView();
-}
-
-function fitZoom() {
-  const availW = W - 70;
-  const availH = H - 230;
-  const bw = SIZE * TW;
-  const bh = SIZE * TH + UNIT * 1.4;
-  return Math.max(0.42, Math.min(availW / bw, availH / bh, 1.35));
-}
-
-function resetView() {
-  cam.zoom = fitZoom();
-  cam.px = 0;
-  cam.py = 0;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  cvs.width = Math.round(W * Math.min(window.devicePixelRatio || 1, 2));
+  cvs.height = Math.round(H * Math.min(window.devicePixelRatio || 1, 2));
+  if (gl) gl.viewport(0, 0, cvs.width, cvs.height);
 }
 
 /* =========================================================
-   2. UTILITAS & AUDIO SYNTHESIS (Web Audio API)
+   2. TEXTURE ATLAS HD (Procedural 32px Canvas)
    ========================================================= */
-function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+function createTextureAtlas() {
+  const size = 256; // 8x8 tiles of 32px
+  const tcvs = document.createElement('canvas');
+  tcvs.width = tcvs.height = size;
+  const tctx = tcvs.getContext('2d');
 
-function shade(hex, amt) {
-  const n = parseInt(hex.slice(1), 16);
-  let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-  r = clamp(r + amt, 0, 255); g = clamp(g + amt, 0, 255); b = clamp(b + amt, 0, 255);
-  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
-function hash2(x, y) {
-  let h = (x * 374761393 + y * 668265263) ^ 0x5bf03635;
-  h = Math.imul(h ^ (h >>> 13), 1274126177);
-  return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
-}
-
-let AC = null;
-function audioInit() {
-  if (!AC) {
-    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; }
+  function drawTile(tx, ty, drawFn) {
+    tctx.save();
+    tctx.translate(tx * 32, ty * 32);
+    drawFn(tctx);
+    tctx.restore();
   }
-  if (AC && AC.state === 'suspended') AC.resume();
-}
 
-function tone(freq, dur, type, vol, slideTo) {
-  if (!AC) return;
-  const t0 = AC.currentTime;
-  const o = AC.createOscillator();
-  const g = AC.createGain();
-  o.type = type || 'sine';
-  o.frequency.setValueAtTime(freq, t0);
-  if (slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(30, slideTo), t0 + dur);
-  g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(vol || 0.06, t0 + 0.012);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  o.connect(g); g.connect(AC.destination);
-  o.start(t0); o.stop(t0 + dur + 0.02);
-}
+  // Tile 0: Grass Top
+  drawTile(0, 0, ctx => {
+    ctx.fillStyle = '#7fb069'; ctx.fillRect(0,0,32,32);
+    ctx.fillStyle = '#659c4f';
+    for(let i=0;i<16;i++) ctx.fillRect((i*7)%32, (i*13)%32, 3, 3);
+  });
+  // Tile 1: Grass Side / Dirt
+  drawTile(1, 0, ctx => {
+    ctx.fillStyle = '#8b5a3b'; ctx.fillRect(0,0,32,32);
+    ctx.fillStyle = '#7fb069'; ctx.fillRect(0,0,32,8);
+  });
+  // Tile 2: Stone / Brick Wall
+  drawTile(2, 0, ctx => {
+    ctx.fillStyle = '#ece0ca'; ctx.fillRect(0,0,32,32);
+    ctx.strokeStyle = '#d2c2a8'; ctx.lineWidth = 1;
+    for(let y=0;y<32;y+=8) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(32,y); ctx.stroke(); }
+    for(let x=0;x<32;x+=16) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,32); ctx.stroke(); }
+  });
+  // Tile 3: Wood Plank Floor / Wall
+  drawTile(3, 0, ctx => {
+    ctx.fillStyle = '#b98b5e'; ctx.fillRect(0,0,32,32);
+    ctx.strokeStyle = '#8f6540'; ctx.lineWidth = 1.5;
+    for(let y=0;y<32;y+=8) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(32,y); ctx.stroke(); }
+  });
+  // Tile 4: Glass Window
+  drawTile(4, 0, ctx => {
+    ctx.fillStyle = '#96d4ee'; ctx.fillRect(0,0,32,32);
+    ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fillRect(4,4,10,24);
+    ctx.strokeStyle = '#55879e'; ctx.lineWidth = 2; ctx.strokeRect(0,0,32,32);
+  });
+  // Tile 5: Door
+  drawTile(5, 0, ctx => {
+    ctx.fillStyle = '#7a4f33'; ctx.fillRect(0,0,32,32);
+    ctx.fillStyle = '#8f5f3d'; ctx.fillRect(2,2,28,28);
+    ctx.fillStyle = '#e6c36a'; ctx.beginPath(); ctx.arc(24, 16, 3, 0, Math.PI*2); ctx.fill();
+  });
+  // Tile 6: Roof / Red Tile
+  drawTile(6, 0, ctx => {
+    ctx.fillStyle = '#b95c4f'; ctx.fillRect(0,0,32,32);
+    ctx.strokeStyle = '#92463b'; ctx.lineWidth = 2;
+    for(let y=0;y<32;y+=8) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(32,y); ctx.stroke(); }
+  });
+  // Tile 7: Water
+  drawTile(7, 0, ctx => {
+    ctx.fillStyle = '#55aadd'; ctx.fillRect(0,0,32,32);
+    ctx.fillStyle = '#77ccff';
+    ctx.fillRect(4, 8, 12, 4); ctx.fillRect(18, 20, 10, 4);
+  });
 
-function sfx(name) {
-  if (!AC) return;
-  switch (name) {
-    case 'place': tone(360, 0.09, 'triangle', 0.07, 240); break;
-    case 'erase': tone(220, 0.09, 'sawtooth', 0.04, 150); break;
-    case 'error': tone(150, 0.16, 'square', 0.05, 110); break;
-    case 'coin': tone(880, 0.08, 'sine', 0.05); setTimeout(() => tone(1320, 0.1, 'sine', 0.045), 70); break;
-    case 'clean': tone(520, 0.07, 'triangle', 0.035, 700); break;
-    case 'ding': tone(1046, 0.12, 'sine', 0.05); break;
-    case 'star': [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tone(f, 0.18, 'sine', 0.055), i * 95)); break;
-    case 'click': tone(600, 0.05, 'sine', 0.035); break;
-  }
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tcvs);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  return tex;
 }
 
 /* =========================================================
-   3. DATA: ITEM, KATEGORI, TANTANGAN
+   3. SHADERS & WEBGL SETUP
    ========================================================= */
-const ITEMS = {
-  /* --- LAHAN --- */
-  grass:  { name: 'Rumput',       icon: '🟩', cat: 'lahan', layer: 'terrain', cost: 0,  color: '#7fb069' },
-  sand:   { name: 'Pasir',        icon: '🟨', cat: 'lahan', layer: 'terrain', cost: 10, color: '#e8d6a8' },
-  water:  { name: 'Air',          icon: '🌊', cat: 'lahan', layer: 'terrain', cost: 40, color: '#6ab7d8' },
-  path:   { name: 'Paving',       icon: '⬜', cat: 'lahan', layer: 'terrain', cost: 8,  color: '#cfc0a8' },
-  deck:   { name: 'Papan Kayu',   icon: '🟫', cat: 'lahan', layer: 'terrain', cost: 15, color: '#b98b5e' },
-  floor:  { name: 'Lantai Dalam', icon: '🪵', cat: 'lahan', layer: 'terrain', cost: 12, color: '#d9a765' },
+const VS_SRC = `
+attribute vec3 aPos;
+attribute vec2 aUV;
+attribute float aLight;
+uniform mat4 uMat;
+varying vec2 vUV;
+varying float vLight;
+void main() {
+  gl_Position = uMat * vec4(aPos, 1.0);
+  vUV = aUV;
+  vLight = aLight;
+}
+`;
 
-  /* --- STRUKTUR --- */
-  wall:   { name: 'Dinding', icon: '🧱', cat: 'struktur', layer: 'object', cost: 25, h: 1.00, kind: 'wall',   color: '#ece0ca' },
-  door:   { name: 'Pintu',   icon: '🚪', cat: 'struktur', layer: 'object', cost: 35, h: 1.00, kind: 'door',   color: '#e6d8bf' },
-  window: { name: 'Jendela', icon: '🪟', cat: 'struktur', layer: 'object', cost: 30, h: 1.00, kind: 'window', color: '#e6dcc8' },
-  fence:  { name: 'Pagar',   icon: '🚧', cat: 'struktur', layer: 'object', cost: 12, h: 0.45, kind: 'fence',  color: '#c8a177' },
-  gate:   { name: 'Gerbang', icon: '⛩️', cat: 'struktur', layer: 'object', cost: 40, h: 0.62, kind: 'gate',   color: '#d4a45f' },
+const FS_SRC = `
+precision mediump float;
+varying vec2 vUV;
+varying float vLight;
+uniform sampler2D uSampler;
+void main() {
+  vec4 tex = texture2D(uSampler, vUV);
+  if(tex.a < 0.1) discard;
+  gl_FragColor = vec4(tex.rgb * vLight, tex.a);
+}
+`;
 
-  /* --- FURNITURE --- */
-  bed:     { name: 'Kasur',    icon: '🛏️', cat: 'furniture', layer: 'object', cost: 120, h: 0.42, kind: 'bed',     color: '#c98a90' },
-  sofa:    { name: 'Sofa',     icon: '🛋️', cat: 'furniture', layer: 'object', cost: 100, h: 0.46, kind: 'sofa',    color: '#7f9ec9' },
-  table:   { name: 'Meja',     icon: '🍽️', cat: 'furniture', layer: 'object', cost: 60,  h: 0.30, kind: 'table',   color: '#b98b5e' },
-  chair:   { name: 'Kursi',    icon: '🪑', cat: 'furniture', layer: 'object', cost: 30,  h: 0.42, kind: 'chair',   color: '#a9744f' },
-  shelf:   { name: 'Rak Buku', icon: '📚', cat: 'furniture', layer: 'object', cost: 70,  h: 0.72, kind: 'shelf',   color: '#a9744f' },
-  tv:      { name: 'TV',       icon: '📺', cat: 'furniture', layer: 'object', cost: 90,  h: 0.50, kind: 'tv',      color: '#3c4552' },
-  rug:     { name: 'Karpet',   icon: '🟥', cat: 'furniture', layer: 'object', cost: 40,  h: 0.02, kind: 'rug',     color: '#c96a6a' },
-  plant:   { name: 'Tanaman',  icon: '🪴', cat: 'furniture', layer: 'object', cost: 35,  h: 0.58, kind: 'plant',   color: '#5f9e5a' },
-  kitchen: { name: 'Dapur',    icon: '🍳', cat: 'furniture', layer: 'object', cost: 130, h: 0.45, kind: 'kitchen', color: '#cfc3b0' },
-  lamp:    { name: 'Lampu',    icon: '💡', cat: 'furniture', layer: 'object', cost: 45,  h: 0.80, kind: 'lamp',    color: '#f2d08a' },
+let prog, posAttr, uvAttr, lightAttr, uMatLoc, uSamplerLoc;
+let quadBuffer, uvBuffer, lightBuffer, indexBuffer;
+let textureObj;
 
-  /* --- HALAMAN --- */
-  tree:     { name: 'Pohon',       icon: '🌳', cat: 'halaman', layer: 'object', cost: 60,  h: 1.15, kind: 'tree',     color: '#5f9e5a' },
-  bush:     { name: 'Semak',       icon: '🌿', cat: 'halaman', layer: 'object', cost: 20,  h: 0.30, kind: 'bush',     color: '#6aa85f' },
-  flower:   { name: 'Bunga',       icon: '🌸', cat: 'halaman', layer: 'object', cost: 10,  h: 0.18, kind: 'flower',   color: '#e58bb0' },
-  bench:    { name: 'Bangku',      icon: '🪵', cat: 'halaman', layer: 'object', cost: 50,  h: 0.35, kind: 'bench',    color: '#b98b5e' },
-  lampPost: { name: 'Lampu Taman', icon: '🏮', cat: 'halaman', layer: 'object', cost: 55,  h: 0.95, kind: 'lamppost', color: '#ffd982' },
-  car:      { name: 'Mobil',       icon: '🚗', cat: 'halaman', layer: 'object', cost: 300, h: 0.50, kind: 'car',      color: '#d9564f' },
+function initGL() {
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const vs = compile(gl.VERTEX_SHADER, VS_SRC);
+  const fs = compile(gl.FRAGMENT_SHADER, FS_SRC);
+  prog = gl.createProgram();
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  posAttr = gl.getAttribLocation(prog, 'aPos');
+  uvAttr = gl.getAttribLocation(prog, 'aUV');
+  lightAttr = gl.getAttribLocation(prog, 'aLight');
+  uMatLoc = gl.getUniformLocation(prog, 'uMat');
+  uSamplerLoc = gl.getUniformLocation(prog, 'uSampler');
+
+  quadBuffer = gl.createBuffer();
+  uvBuffer = gl.createBuffer();
+  lightBuffer = gl.createBuffer();
+  indexBuffer = gl.createBuffer();
+
+  textureObj = createTextureAtlas();
+  gl.enable(gl.DEPTH_TEST);
+  gl.depthFunc(gl.LEQUAL);
+  gl.enable(gl.CULL_FACE);
+  gl.cullFace(gl.BACK);
+}
+
+/* =========================================================
+   4. DATA: BLOCKS & ITEMS
+   ========================================================= */
+const BLOCKS = {
+  air:    { id: 0, name: 'Kosong',  ico: '⬛', t: -1, solid: false },
+  grass:  { id: 1, name: 'Rumput',  ico: '🟩', t: 0,  solid: true },
+  dirt:   { id: 2, name: 'Tanah',   ico: '🟫', t: 1,  solid: true },
+  brick:  { id: 3, name: 'Dinding', ico: '🧱', t: 2,  solid: true },
+  wood:   { id: 4, name: 'Kayu',    ico: '🪵', t: 3,  solid: true },
+  glass:  { id: 5, name: 'Kaca',    ico: '🪟', t: 4,  solid: true },
+  door:   { id: 6, name: 'Pintu',   ico: '🚪', t: 5,  solid: true },
+  roof:   { id: 7, name: 'Atap',    ico: '🏠', t: 6,  solid: true },
+  water:  { id: 8, name: 'Air',     ico: '🌊', t: 7,  solid: false },
 };
 
 const CATS = [
-  { id: 'lahan',     name: 'Lahan',     icon: '🟩' },
-  { id: 'struktur',  name: 'Struktur',  icon: '🧱' },
-  { id: 'furniture', name: 'Furniture', icon: '🛋️' },
-  { id: 'halaman',   name: 'Halaman',   icon: '🌳' },
-  { id: 'bersih',    name: 'Bersih',    icon: '🧽' },
-  { id: 'hapus',     name: 'Hapus',     icon: '🗑️' },
+  { id: 'struktur', name: 'Struktur', icon: '🧱' },
+  { id: 'alam',     name: 'Alam',     icon: '🌿' },
+  { id: 'hapus',    name: 'Hapus',    icon: '🗑️' },
 ];
 
-const TOOLS = {
-  clean:        { id: 'clean',        name: 'Spons',       icon: '🧽', cat: 'bersih', tool: true },
-  eraseObj:     { id: 'eraseObj',     name: 'Hapus Objek', icon: '❌', cat: 'hapus',  tool: true },
-  eraseTerrain: { id: 'eraseTerrain', name: 'Hapus Lahan', icon: '🩹', cat: 'hapus',  tool: true },
-};
-
-const CHALLENGES = [
-  {
-    id: 'c1', name: 'Rumah Mungil', emoji: '🏡', budget: 3200, dirt: 7,
-    brief: 'Keluarga kecil butuh rumah sederhana: 1 kamar tidur, dapur, ruang tamu, dan halaman hijau.',
-    reqs: [
-      { id: 'door',    n: 1, label: 'Pintu masuk' },
-      { id: 'bed',     n: 1, label: 'Kasur' },
-      { id: 'kitchen', n: 1, label: 'Dapur' },
-      { id: 'sofa',    n: 1, label: 'Sofa' },
-      { id: 'tree',    n: 2, label: 'Pohon' },
-      { id: 'path',    n: 6, label: 'Paving', layer: 'terrain' },
-    ],
-  },
-  {
-    id: 'c2', name: 'Villa Pantai', emoji: '🌴', budget: 5200, dirt: 10,
-    brief: 'Villa liburan dekat pantai: 2 kamar, teras kayu, kolam kecil, dan pepohonan.',
-    reqs: [
-      { id: 'door',   n: 2, label: 'Pintu' },
-      { id: 'window', n: 2, label: 'Jendela' },
-      { id: 'bed',    n: 2, label: 'Kasur' },
-      { id: 'deck',   n: 8, label: 'Teras kayu', layer: 'terrain' },
-      { id: 'water',  n: 4, label: 'Kolam',      layer: 'terrain' },
-      { id: 'tree',   n: 3, label: 'Pohon' },
-    ],
-  },
-  {
-    id: 'c3', name: 'Rumah Keluarga', emoji: '🏘️', budget: 7500, dirt: 12,
-    brief: 'Rumah untuk keluarga besar: 3 kamar, dapur, ruang TV, dan taman bermain kecil.',
-    reqs: [
-      { id: 'door',    n: 2, label: 'Pintu' },
-      { id: 'window',  n: 3, label: 'Jendela' },
-      { id: 'bed',     n: 3, label: 'Kasur' },
-      { id: 'kitchen', n: 1, label: 'Dapur' },
-      { id: 'sofa',    n: 1, label: 'Sofa' },
-      { id: 'tv',      n: 1, label: 'TV' },
-      { id: 'plant',   n: 3, label: 'Tanaman' },
-      { id: 'tree',    n: 2, label: 'Pohon' },
-    ],
-  },
+const PALETTE = [
+  { id: 3, cat: 'struktur' }, // brick
+  { id: 4, cat: 'struktur' }, // wood
+  { id: 5, cat: 'struktur' }, // glass
+  { id: 6, cat: 'struktur' }, // door
+  { id: 7, cat: 'struktur' }, // roof
+  { id: 1, cat: 'alam' },     // grass
+  { id: 2, cat: 'alam' },     // dirt
+  { id: 8, cat: 'alam' },     // water
+  { id: 0, cat: 'hapus' },    // air (hapus)
 ];
 
 /* =========================================================
-   4. GAME STATE
+   5. GAME STATE & WORLD
    ========================================================= */
-let terrain = new Array(SIZE * SIZE).fill('grass');
-let objects = new Array(SIZE * SIZE).fill(null);   // { id }
-let dirt = new Float32Array(SIZE * SIZE);          // 0..1 (1 = kotor)
-let dirtTotal = 0;
-
-let mode = 'sandbox';           // 'sandbox' | 'challenge'
-let challenge = null;
-let budget = 0;
-let startBudget = 0;
-let gameState = 'menu';         // 'menu' | 'build' | 'result'
-
-let sel = 'grass';
-let cat = 'lahan';
-let hover = { x: -1, y: -1 };
-
-let undoStack = [], redoStack = [];
-let painting = false, strokeChanged = false;
-let ptrs = new Map();
-let pinch = null;
-
+let world = new Uint8Array(SIZE * WORLD_H * SIZE); // 16 x 8 x 16
+let undoStack = [];
 let userName = '';
-let particles = [];
-let toastTimer = 0;
+let mode = 'architect'; // 'architect' | 'walk'
+
+// Architect cam (Isometric)
+const camArch = { dist: 22, pitch: 0.78, yaw: 0.783, cx: SIZE/2, cy: 2, cz: SIZE/2 };
+
+// Walk cam (First-Person HD)
+const player = { x: 8, y: 2, z: 8, yaw: 0, pitch: 0, vx: 0, vz: 0 };
+const keys = {};
+
+let selBlock = 3; // default brick
+let currentCat = 'struktur';
+let hoverBlock = null;
+
+function idx(x, y, z) {
+  return (y * SIZE + z) * SIZE + x;
+}
+
+function getBlock(x, y, z) {
+  if (x < 0 || x >= SIZE || y < 0 || y >= WORLD_H || z < 0 || z >= SIZE) return 0;
+  return world[idx(x, y, z)];
+}
+
+function setBlock(x, y, z, val) {
+  if (x < 0 || x >= SIZE || y < 0 || y >= WORLD_H || z < 0 || z >= SIZE) return;
+  world[idx(x, y, z)] = val;
+}
+
+function resetWorld() {
+  world.fill(0);
+  // Buat dataran rumput dasar
+  for(let x=0; x<SIZE; x++) {
+    for(let z=0; z<SIZE; z++) {
+      setBlock(x, 0, z, 1);
+    }
+  }
+  undoStack = [];
+  saveDesign();
+}
 
 /* =========================================================
-   5. GEOMETRI ISOMETRIK & PICKING
+   6. LOCALSTORAGE
    ========================================================= */
-function proj(gx, gy, lift) {
-  const c = (SIZE - 1) / 2;
-  const a = gx - c, b = gy - c;
-  const sx = (a - b) * TW / 2;
-  const sy = (a + b) * TH / 2;
-  return {
-    x: W / 2 + cam.px + sx * cam.zoom,
-    y: H * 0.52 + cam.py + (sy - (lift || 0)) * cam.zoom,
-  };
-}
-
-function unproj(px, py) {
-  const sx = (px - W / 2 - cam.px) / cam.zoom;
-  const sy = (py - H * 0.52 - cam.py) / cam.zoom;
-  const a = sx / TW + sy / TH;
-  const b = sy / TH - sx / TW;
-  const c = (SIZE - 1) / 2;
-  const gx = Math.round(a + c);
-  const gy = Math.round(b + c);
-  if (gx < 0 || gy < 0 || gx >= SIZE || gy >= SIZE) return null;
-  return { x: gx, y: gy };
-}
-
-function idx(x, y) { return y * SIZE + x; }
-
-/* =========================================================
-   6. LOCALSTORAGE: USERNAME, LEADERBOARD, SAVE
-   ========================================================= */
-function sanitizeName(s) {
-  return String(s || '').replace(/[<>&"']/g, '').trim().slice(0, 15);
-}
-
-function loadUser() {
-  try { return sanitizeName(localStorage.getItem(LS_USER) || ''); } catch (e) { return ''; }
-}
-
-function saveUser(n) {
-  try { localStorage.setItem(LS_USER, n); } catch (e) {}
-}
-
-function loadLB() {
-  try {
-    const raw = localStorage.getItem(LS_LB);
-    const arr = JSON.parse(raw || '[]');
-    return Array.isArray(arr) ? arr : [];
-  } catch (e) { return []; }
-}
-
-function saveLB(list) {
-  try { localStorage.setItem(LS_LB, JSON.stringify(list.slice(0, 10))); } catch (e) {}
-}
-
-function fmtDate(d) {
-  const p = n => String(n).padStart(2, '0');
-  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) +
-         ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
-}
-
-function submitScore(score) {
-  const list = loadLB();
-  list.push({
-    id: 'run_' + Date.now(),
-    username: userName || 'ARSITEK',
-    score: score,
-    timestamp: Date.now(),
-    date: fmtDate(new Date()),
-    mode: challenge ? challenge.name : '-',
-  });
-  list.sort((a, b) => b.score - a.score);
-  const top = list.slice(0, 10);
-  saveLB(top);
-  return top;
-}
-
 function saveDesign() {
-  if (mode !== 'sandbox') return;
   try {
-    localStorage.setItem(LS_SAVE, JSON.stringify({ terrain: terrain, objects: objects }));
-  } catch (e) {}
-}
-
-let saveTimer = 0;
-function saveDesignDebounced() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveDesign, 400);
+    localStorage.setItem(LS_SAVE, JSON.stringify(Array.from(world)));
+  } catch(e){}
 }
 
 function loadDesign() {
   try {
     const raw = localStorage.getItem(LS_SAVE);
-    if (!raw) return false;
-    const d = JSON.parse(raw);
-    if (!d || !Array.isArray(d.terrain) || d.terrain.length !== SIZE * SIZE) return false;
-    terrain = d.terrain.slice();
-    objects = d.objects && d.objects.length === SIZE * SIZE ? d.objects.slice() : new Array(SIZE * SIZE).fill(null);
-    return true;
-  } catch (e) { return false; }
+    if(raw) {
+      const arr = JSON.parse(raw);
+      if(arr.length === world.length) {
+        world.set(arr);
+        return;
+      }
+    }
+  } catch(e){}
+  resetWorld();
 }
 
 /* =========================================================
-   7. RENDERING
+   7. MATH & MATRIX UTILS
    ========================================================= */
-function poly(pts, fill, stroke) {
-  ctx.beginPath();
-  ctx.moveTo(pts[0].x, pts[0].y);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-  ctx.closePath();
-  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
-  if (stroke) { ctx.strokeStyle = stroke; ctx.stroke(); }
+function mat4Identity() {
+  return [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
 }
 
-function diamondAt(cx, cy, rw, rh, fill) {
-  poly([
-    { x: cx, y: cy - rh / 2 },
-    { x: cx + rw / 2, y: cy },
-    { x: cx, y: cy + rh / 2 },
-    { x: cx - rw / 2, y: cy },
-  ], fill);
+function mat4Perspective(fov, aspect, near, far) {
+  const f = 1.0 / Math.tan(fov / 2);
+  const nf = 1 / (near - far);
+  return [
+    f/aspect, 0, 0, 0,
+    0, f, 0, 0,
+    0, 0, (far + near) * nf, -1,
+    0, 0, (2 * far * near) * nf, 0
+  ];
 }
 
-function isoBox(cx, cy, rw, rh, hp, cTop, cLeft, cRight) {
-  const T = { x: cx, y: cy - rh / 2 };
-  const R = { x: cx + rw / 2, y: cy };
-  const B = { x: cx, y: cy + rh / 2 };
-  const L = { x: cx - rw / 2, y: cy };
-
-  poly([L, B, { x: B.x, y: B.y - hp }, { x: L.x, y: L.y - hp }], cLeft);
-  poly([B, R, { x: R.x, y: R.y - hp }, { x: B.x, y: B.y - hp }], cRight);
-  poly([
-    { x: T.x, y: T.y - hp }, { x: R.x, y: R.y - hp },
-    { x: B.x, y: B.y - hp }, { x: L.x, y: L.y - hp },
-  ], cTop);
-}
-
-function faceR(cx, cy, rw, rh, hp, u, v) {
-  const Bx = cx, By = cy + rh / 2, Rx = cx + rw / 2, Ry = cy;
-  return { x: Bx + (Rx - Bx) * u, y: By + (Ry - By) * u - hp * v };
-}
-
-function faceL(cx, cy, rw, rh, hp, u, v) {
-  const Lx = cx - rw / 2, Ly = cy, Bx = cx, By = cy + rh / 2;
-  return { x: Lx + (Bx - Lx) * u, y: Ly + (By - Ly) * u - hp * v };
-}
-
-function boxAt(cx, cy, rw, rh, h, color) {
-  isoBox(cx, cy, rw, rh, h, shade(color, 24), shade(color, -4), shade(color, -18));
-}
-
-function ell(cx, cy, rx, ry, color) {
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, Math.max(0.5, rx), Math.max(0.5, ry), 0, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function line(x1, y1, x2, y2, color, w) {
-  ctx.strokeStyle = color;
-  ctx.lineWidth = w || 1;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
-}
-
-function glow(cx, cy, r, color) {
-  const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-  g.addColorStop(0, color);
-  g.addColorStop(1, 'rgba(255,220,150,0)');
-  ctx.fillStyle = g;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-/* ---------- Latar & alas diorama ---------- */
-function drawBackground() {
-  const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#101821');
-  g.addColorStop(0.55, '#16212d');
-  g.addColorStop(1, '#0e151d');
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
-
-  const rg = ctx.createRadialGradient(W * 0.5, H * 0.46, 40, W * 0.5, H * 0.46, Math.max(W, H) * 0.62);
-  rg.addColorStop(0, 'rgba(90,140,180,.13)');
-  rg.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = rg;
-  ctx.fillRect(0, 0, W, H);
-}
-
-function drawPlate() {
-  const c = proj((SIZE - 1) / 2, (SIZE - 1) / 2);
-  const w = (SIZE * TW + 22) * cam.zoom;
-  const h = (SIZE * TH + 22) * cam.zoom;
-  const th = 20 * cam.zoom;
-
-  // sisi tebal alas
-  poly([
-    { x: c.x - w / 2, y: c.y },
-    { x: c.x, y: c.y + h / 2 },
-    { x: c.x + w / 2, y: c.y },
-    { x: c.x + w / 2, y: c.y + th },
-    { x: c.x, y: c.y + h / 2 + th },
-    { x: c.x - w / 2, y: c.y + th },
-  ], '#33241c');
-
-  // permukaan alas
-  diamondAt(c.x, c.y, w, h, '#443026');
-
-  // garis tepi
-  ctx.strokeStyle = 'rgba(255,210,160,.10)';
-  ctx.lineWidth = Math.max(1, 1.5 * cam.zoom);
-  ctx.beginPath();
-  ctx.moveTo(c.x, c.y - h / 2);
-  ctx.lineTo(c.x + w / 2, c.y);
-  ctx.lineTo(c.x, c.y + h / 2);
-  ctx.lineTo(c.x - w / 2, c.y);
-  ctx.closePath();
-  ctx.stroke();
-}
-
-/* ---------- Petak lahan ---------- */
-function drawTerrainTile(x, y) {
-  const p = proj(x, y);
-  const rw = TW * cam.zoom + 0.7;
-  const rh = TH * cam.zoom + 0.7;
-  const key = terrain[idx(x, y)];
-  const it = ITEMS[key] || ITEMS.grass;
-
-  let col = it.color;
-  const v = hash2(x, y);
-  col = shade(col, Math.round((v - 0.5) * 10));
-
-  if (key === 'water') {
-    col = shade(col, Math.round(Math.sin(time * 1.8 + x * 0.8 + y * 0.6) * 8));
+function mat4Multiply(a, b) {
+  const out = new Array(16);
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      out[i*4+j] = a[i*4+0]*b[0*4+j] + a[i*4+1]*b[1*4+j] + a[i*4+2]*b[2*4+j] + a[i*4+3]*b[3*4+j];
+    }
   }
-
-  diamondAt(p.x, p.y, rw, rh, col);
-
-  // detail kecil
-  if (key === 'grass' && v > 0.55) {
-    ctx.globalAlpha = 0.16;
-    ell(p.x + (v - 0.5) * rw * 0.5, p.y - 2, rw * 0.09, rh * 0.09, '#2f5c26');
-    ctx.globalAlpha = 1;
-  } else if (key === 'path') {
-    ctx.globalAlpha = 0.18;
-    line(p.x - rw * 0.3, p.y, p.x + rw * 0.3, p.y, '#7a6a55', 1);
-    ctx.globalAlpha = 1;
-  } else if (key === 'deck' || key === 'floor') {
-    ctx.globalAlpha = 0.16;
-    for (let k = -1; k <= 1; k++) {
-      line(p.x - rw * 0.42, p.y + k * rh * 0.2, p.x + rw * 0.42, p.y + k * rh * 0.2, '#5b3d24', 1);
-    }
-    ctx.globalAlpha = 1;
-  }
-
-  // noda (mini-task bersih-bersih)
-  const d = dirt[idx(x, y)];
-  if (d > 0.01) {
-    ctx.globalAlpha = d * 0.78;
-    diamondAt(p.x, p.y, rw * 0.94, rh * 0.94, '#3b2a1c');
-    ctx.globalAlpha = d * 0.5;
-    ell(p.x + rw * 0.12, p.y + 1, rw * 0.16, rh * 0.16, '#241a11');
-    ell(p.x - rw * 0.15, p.y - 2, rw * 0.1, rh * 0.1, '#4b3826');
-    ctx.globalAlpha = 1;
-  }
+  return out;
 }
 
-/* ---------- Objek ---------- */
-function drawObject(it, cx, cy, alpha) {
-  const U = UNIT * cam.zoom;
-  const hp = (it.h || 0.4) * U;
-  // dinding/pintu/jendela memenuhi petak agar menyambung rapi
-  const fp = (it.kind === 'wall' || it.kind === 'door' || it.kind === 'window') ? 1 : 0.84;
-  const rw = TW * cam.zoom * fp;
-  const rh = TH * cam.zoom * fp;
+function mat4Translate(m, x, y, z) {
+  const t = [1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1];
+  return mat4Multiply(m, t);
+}
 
-  ctx.save();
-  if (alpha != null) ctx.globalAlpha = alpha;
+function mat4RotateX(m, rad) {
+  const c = Math.cos(rad), s = Math.sin(rad);
+  const r = [1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1];
+  return mat4Multiply(m, r);
+}
 
-  if (it.kind !== 'rug') {
-    ctx.globalAlpha = (alpha != null ? alpha : 1) * 0.16;
-    ctx.fillStyle = '#0b1118';
-    ctx.beginPath();
-    ctx.ellipse(cx, cy + rh * 0.06, rw * 0.46, rh * 0.46, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = alpha != null ? alpha : 1;
-  }
+function mat4RotateY(m, rad) {
+  const c = Math.cos(rad), s = Math.sin(rad);
+  const r = [c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1];
+  return mat4Multiply(m, r);
+}
 
-  switch (it.kind) {
-    case 'wall': {
-      boxAt(cx, cy, rw, rh, hp, it.color);
-      ctx.strokeStyle = 'rgba(120,100,80,.15)';
-      ctx.lineWidth = 1;
-      for (const v of [0.33, 0.66]) {
-        let a = faceL(cx, cy, rw, rh, hp, 0.05, v);
-        let b = faceL(cx, cy, rw, rh, hp, 0.95, v);
-        line(a.x, a.y, b.x, b.y, 'rgba(120,100,80,.15)', 1);
-        a = faceR(cx, cy, rw, rh, hp, 0.05, v);
-        b = faceR(cx, cy, rw, rh, hp, 0.95, v);
-        line(a.x, a.y, b.x, b.y, 'rgba(120,100,80,.15)', 1);
-      }
-      break;
-    }
-    case 'door': {
-      boxAt(cx, cy, rw, rh, hp, it.color);
-      poly([
-        faceR(cx, cy, rw, rh, hp, 0.24, 0.03),
-        faceR(cx, cy, rw, rh, hp, 0.76, 0.03),
-        faceR(cx, cy, rw, rh, hp, 0.76, 0.72),
-        faceR(cx, cy, rw, rh, hp, 0.24, 0.72),
-      ], '#7a4f33');
-      poly([
-        faceR(cx, cy, rw, rh, hp, 0.29, 0.08),
-        faceR(cx, cy, rw, rh, hp, 0.71, 0.08),
-        faceR(cx, cy, rw, rh, hp, 0.71, 0.67),
-        faceR(cx, cy, rw, rh, hp, 0.29, 0.67),
-      ], '#8f5f3d');
-      const k = faceR(cx, cy, rw, rh, hp, 0.63, 0.38);
-      ell(k.x, k.y, Math.max(1.1, 1.7 * cam.zoom), Math.max(1.1, 1.7 * cam.zoom), '#e6c36a');
-      break;
-    }
-    case 'window': {
-      boxAt(cx, cy, rw, rh, hp, it.color);
-      poly([
-        faceR(cx, cy, rw, rh, hp, 0.16, 0.42),
-        faceR(cx, cy, rw, rh, hp, 0.84, 0.42),
-        faceR(cx, cy, rw, rh, hp, 0.84, 0.86),
-        faceR(cx, cy, rw, rh, hp, 0.16, 0.86),
-      ], 'rgba(150,212,238,.92)');
-      let a = faceR(cx, cy, rw, rh, hp, 0.16, 0.64), b = faceR(cx, cy, rw, rh, hp, 0.84, 0.64);
-      line(a.x, a.y, b.x, b.y, '#9a8f7d', Math.max(1, 1.4 * cam.zoom));
-      a = faceR(cx, cy, rw, rh, hp, 0.5, 0.42); b = faceR(cx, cy, rw, rh, hp, 0.5, 0.86);
-      line(a.x, a.y, b.x, b.y, '#9a8f7d', Math.max(1, 1.4 * cam.zoom));
-      break;
-    }
-    case 'fence': {
-      boxAt(cx, cy, rw * 0.95, rh * 0.95, hp, it.color);
-      for (const u of [0.1, 0.5, 0.9]) {
-        let a = faceR(cx, cy, rw * 0.95, rh * 0.95, hp, u, 0);
-        let b = faceR(cx, cy, rw * 0.95, rh * 0.95, hp, u, 1);
-        line(a.x, a.y, b.x, b.y, shade(it.color, -34), Math.max(1.2, 2.6 * cam.zoom));
-      }
-      break;
-    }
-    case 'gate': {
-      boxAt(cx - rw * 0.32, cy - rh * 0.32, rw * 0.26, rh * 0.26, hp, it.color);
-      boxAt(cx + rw * 0.32, cy + rh * 0.32, rw * 0.26, rh * 0.26, hp, it.color);
-      line(cx - rw * 0.32, cy - rh * 0.32 - hp * 0.72, cx + rw * 0.32, cy + rh * 0.32 - hp * 0.72, '#c98a3c', Math.max(1.4, 3 * cam.zoom));
-      break;
-    }
-    case 'bed': {
-      boxAt(cx, cy, rw, rh, hp * 0.42, '#b98b5e');
-      boxAt(cx, cy - hp * 0.42, rw * 0.92, rh * 0.92, hp * 0.34, '#f4ece0');
-      diamondAt(cx, cy - hp * 0.76 + rh * 0.14, rw * 0.88, rh * 0.6, it.color);
-      ell(cx, cy - hp * 0.78 - rh * 0.2, rw * 0.2, rh * 0.15, '#ffffff');
-      break;
-    }
-    case 'sofa': {
-      boxAt(cx, cy - rh * 0.28, rw * 0.94, rh * 0.36, hp * 0.9, it.color);
-      boxAt(cx, cy + rh * 0.06, rw, rh * 0.64, hp * 0.5, it.color);
-      diamondAt(cx - rw * 0.22, cy + rh * 0.06 - hp * 0.5, rw * 0.4, rh * 0.4, shade(it.color, 20));
-      diamondAt(cx + rw * 0.22, cy + rh * 0.06 - hp * 0.5, rw * 0.4, rh * 0.4, shade(it.color, 20));
-      break;
-    }
-    case 'table': {
-      boxAt(cx, cy, rw * 0.92, rh * 0.92, hp * 0.82, '#a97a4d');
-      diamondAt(cx, cy - hp * 0.82, rw * 0.9, rh * 0.88, shade(it.color, 18));
-      break;
-    }
-    case 'chair': {
-      boxAt(cx, cy - rh * 0.18, rw * 0.6, rh * 0.2, hp, it.color);
-      boxAt(cx, cy + rh * 0.04, rw * 0.62, rh * 0.62, hp * 0.48, it.color);
-      break;
-    }
-    case 'shelf': {
-      boxAt(cx, cy, rw * 0.78, rh * 0.78, hp, it.color);
-      const books = ['#d97b8a', '#7f9ec9', '#e6c36a', '#7fb069', '#b98b5e'];
-      for (let s = 0; s < 3; s++) {
-        const v0 = 0.14 + s * 0.26, v1 = v0 + 0.2;
-        let a = faceR(cx, cy, rw * 0.78, rh * 0.78, hp, 0.1, v0);
-        let b = faceR(cx, cy, rw * 0.78, rh * 0.78, hp, 0.9, v0);
-        line(a.x, a.y, b.x, b.y, shade(it.color, -22), 1.2);
-        for (let k = 0; k < 4; k++) {
-          const u0 = 0.16 + k * 0.2;
-          poly([
-            faceR(cx, cy, rw * 0.78, rh * 0.78, hp, u0, v0),
-            faceR(cx, cy, rw * 0.78, rh * 0.78, hp, u0 + 0.12, v0),
-            faceR(cx, cy, rw * 0.78, rh * 0.78, hp, u0 + 0.12, v1),
-            faceR(cx, cy, rw * 0.78, rh * 0.78, hp, u0, v1),
-          ], books[(s + k) % books.length]);
+/* =========================================================
+   8. MESH BUILDER (GREEDY / FACE CULLING)
+   ========================================================= */
+function buildMesh() {
+  const positions = [];
+  const uvs = [];
+  const lights = [];
+  const indices = [];
+  let idxCount = 0;
+
+  const faces = [
+    { dir: [0,0,-1], corners: [[0,0,0],[1,0,0],[1,1,0],[0,1,0]], l: 0.7 }, // Back
+    { dir: [0,0,1],  corners: [[1,0,1],[0,0,1],[0,1,1],[1,1,1]], l: 1.0 }, // Front
+    { dir: [-1,0,0], corners: [[0,0,1],[0,0,0],[0,1,0],[0,1,1]], l: 0.8 }, // Left
+    { dir: [1,0,0],  corners: [[1,0,0],[1,0,1],[1,1,1],[1,1,0]], l: 0.9 }, // Right
+    { dir: [0,-1,0], corners: [[0,0,0],[1,0,0],[1,0,1],[0,0,1]], l: 0.6 }, // Bottom
+    { dir: [0,1,0],  corners: [[0,1,1],[1,1,1],[1,1,0],[0,1,0]], l: 1.0 }, // Top
+  ];
+
+  for(let x=0; x<SIZE; x++) {
+    for(let y=0; y<WORLD_H; y++) {
+      for(let z=0; z<SIZE; z++) {
+        const id = getBlock(x, y, z);
+        if(id === 0) continue;
+        const b = BLOCKS[Object.keys(BLOCKS).find(k => BLOCKS[k].id === id)];
+        if(!b || b.t < 0) continue;
+
+        const tx = (b.t % 8) / 8;
+        const ty = Math.floor(b.t / 8) / 8;
+        const tw = 1/8, th = 1/8;
+
+        for(const f of faces) {
+          const nx = x + f.dir[0], ny = y + f.dir[1], nz = z + f.dir[2];
+          const nId = getBlock(nx, ny, nz);
+          // Render face jika tetangga udara atau transparan
+          if(nId === 0 || (id !== 5 && nId === 5)) {
+            for(const c of f.corners) {
+              positions.push(x + c[0], y + c[1], z + c[2]);
+              lights.push(f.l);
+            }
+            // UV mapping
+            uvs.push(
+              tx, ty + th,
+              tx + tw, ty + th,
+              tx + tw, ty,
+              tx, ty
+            );
+            indices.push(idxCount, idxCount+1, idxCount+2, idxCount, idxCount+2, idxCount+3);
+            idxCount += 4;
+          }
         }
       }
-      break;
-    }
-    case 'tv': {
-      boxAt(cx, cy, rw * 0.68, rh * 0.4, hp * 0.2, '#6b7280');
-      boxAt(cx, cy - hp * 0.2, rw * 0.9, rh * 0.34, hp * 0.58, '#2f3742');
-      poly([
-        faceR(cx, cy - hp * 0.2, rw * 0.9, rh * 0.34, hp * 0.58, 0.08, 0.12),
-        faceR(cx, cy - hp * 0.2, rw * 0.9, rh * 0.34, hp * 0.58, 0.92, 0.12),
-        faceR(cx, cy - hp * 0.2, rw * 0.9, rh * 0.34, hp * 0.58, 0.92, 0.88),
-        faceR(cx, cy - hp * 0.2, rw * 0.9, rh * 0.34, hp * 0.58, 0.08, 0.88),
-      ], 'rgba(120,205,240,.85)');
-      break;
-    }
-    case 'rug': {
-      diamondAt(cx, cy, rw * 1.05, rh * 1.05, it.color);
-      diamondAt(cx, cy, rw * 0.74, rh * 0.74, shade(it.color, 24));
-      diamondAt(cx, cy, rw * 0.42, rh * 0.42, shade(it.color, -10));
-      break;
-    }
-    case 'plant': {
-      boxAt(cx, cy, rw * 0.42, rh * 0.42, hp * 0.3, '#b06a4a');
-      ell(cx, cy - hp * 0.5, rw * 0.34, rh * 0.5, shade(it.color, -12));
-      ell(cx - rw * 0.1, cy - hp * 0.62, rw * 0.26, rh * 0.38, it.color);
-      ell(cx + rw * 0.1, cy - hp * 0.56, rw * 0.22, rh * 0.3, shade(it.color, 18));
-      break;
-    }
-    case 'kitchen': {
-      boxAt(cx, cy, rw * 0.98, rh * 0.9, hp, it.color);
-      diamondAt(cx, cy - hp, rw * 0.96, rh * 0.86, shade(it.color, 22));
-      diamondAt(cx - rw * 0.18, cy - hp, rw * 0.32, rh * 0.28, '#8fb3c4');
-      ell(cx + rw * 0.2, cy - hp - rh * 0.06, rw * 0.07, rh * 0.07, '#4d4d4d');
-      ell(cx + rw * 0.34, cy - hp - rh * 0.02, rw * 0.06, rh * 0.06, '#4d4d4d');
-      break;
-    }
-    case 'lamp': {
-      boxAt(cx, cy, rw * 0.16, rh * 0.16, hp * 0.78, '#9aa0a6');
-      poly([
-        { x: cx - rw * 0.26, y: cy - hp * 0.6 },
-        { x: cx + rw * 0.26, y: cy - hp * 0.6 },
-        { x: cx + rw * 0.15, y: cy - hp * 0.95 },
-        { x: cx - rw * 0.15, y: cy - hp * 0.95 },
-      ], it.color);
-      glow(cx, cy - hp * 0.75, rw * 0.5, 'rgba(255,220,140,.35)');
-      break;
-    }
-    case 'tree': {
-      boxAt(cx, cy, rw * 0.19, rh * 0.19, hp * 0.42, '#8a5a3b');
-      ell(cx, cy - hp * 0.6, rw * 0.42, rw * 0.34, shade(it.color, -16));
-      ell(cx - rw * 0.1, cy - hp * 0.76, rw * 0.36, rw * 0.28, it.color);
-      ell(cx + rw * 0.12, cy - hp * 0.88, rw * 0.24, rw * 0.2, shade(it.color, 22));
-      break;
-    }
-    case 'bush': {
-      ell(cx, cy - hp * 0.3, rw * 0.4, rh * 0.7, shade(it.color, -12));
-      ell(cx - rw * 0.16, cy - hp * 0.42, rw * 0.28, rh * 0.5, it.color);
-      ell(cx + rw * 0.16, cy - hp * 0.36, rw * 0.24, rh * 0.42, shade(it.color, 16));
-      break;
-    }
-    case 'flower': {
-      line(cx, cy, cx, cy - hp, '#5f8f4a', Math.max(1, 1.4 * cam.zoom));
-      ell(cx, cy - hp, rw * 0.13, rh * 0.16, it.color);
-      ell(cx - rw * 0.12, cy - hp * 0.82, rw * 0.1, rh * 0.12, shade(it.color, 12));
-      ell(cx + rw * 0.12, cy - hp * 0.78, rw * 0.1, rh * 0.12, shade(it.color, -8));
-      break;
-    }
-    case 'bench': {
-      boxAt(cx, cy - rh * 0.2, rw * 0.9, rh * 0.2, hp * 0.95, it.color);
-      boxAt(cx, cy + rh * 0.08, rw * 0.94, rh * 0.55, hp * 0.42, it.color);
-      break;
-    }
-    case 'lamppost': {
-      boxAt(cx, cy, rw * 0.11, rh * 0.11, hp * 0.9, '#6b7280');
-      ell(cx, cy - hp * 0.92, rw * 0.16, rh * 0.16, it.color);
-      glow(cx, cy - hp * 0.9, rw * 0.55, 'rgba(255,215,130,.4)');
-      break;
-    }
-    case 'car': {
-      boxAt(cx, cy, rw * 0.96, rh * 0.82, hp * 0.45, it.color);
-      boxAt(cx, cy - rh * 0.08, rw * 0.6, rh * 0.42, hp * 0.78, shade(it.color, 18));
-      ell(cx - rw * 0.28, cy + rh * 0.34, rw * 0.1, rh * 0.14, '#20242a');
-      ell(cx + rw * 0.28, cy + rh * 0.34, rw * 0.1, rh * 0.14, '#20242a');
-      break;
-    }
-    default: {
-      boxAt(cx, cy, rw, rh, hp, it.color || '#b0b0b0');
-    }
-  }
-  ctx.restore();
-}
-
-/* ---------- Partikel ---------- */
-function spawnSpark(x, y, color, n) {
-  for (let i = 0; i < (n || 4); i++) {
-    particles.push({
-      x: x, y: y,
-      vx: (Math.random() - 0.5) * 70,
-      vy: -30 - Math.random() * 60,
-      life: 1, color: color, size: 1.5 + Math.random() * 2,
-    });
-  }
-}
-
-function updateParticles(dt) {
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.x += p.vx * dt;
-    p.y += p.vy * dt;
-    p.vy += 120 * dt;
-    p.life -= dt * 1.7;
-    if (p.life <= 0) particles.splice(i, 1);
-  }
-}
-
-function drawParticles() {
-  for (const p of particles) {
-    ctx.globalAlpha = Math.max(0, p.life);
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-}
-
-/* ---------- Render utama ---------- */
-function drawHover() {
-  if (hover.x < 0 || hover.y < 0 || gameState !== 'build') return;
-  const p = proj(hover.x, hover.y);
-  const rw = TW * cam.zoom, rh = TH * cam.zoom;
-
-  ctx.save();
-  ctx.setLineDash([5 * cam.zoom, 4 * cam.zoom]);
-  ctx.strokeStyle = 'rgba(255,255,255,.75)';
-  ctx.lineWidth = Math.max(1, 1.6 * cam.zoom);
-  ctx.beginPath();
-  ctx.moveTo(p.x, p.y - rh / 2);
-  ctx.lineTo(p.x + rw / 2, p.y);
-  ctx.lineTo(p.x, p.y + rh / 2);
-  ctx.lineTo(p.x - rw / 2, p.y);
-  ctx.closePath();
-  ctx.stroke();
-  ctx.restore();
-
-  const it = ITEMS[sel];
-  if (it && it.layer === 'object') {
-    drawObject(it, p.x, p.y, 0.45);
-  }
-}
-
-function draw() {
-  drawBackground();
-  drawPlate();
-
-  for (let s = 0; s <= 2 * (SIZE - 1); s++) {
-    for (let x = 0; x < SIZE; x++) {
-      const y = s - x;
-      if (y < 0 || y >= SIZE) continue;
-      drawTerrainTile(x, y);
-      const o = objects[idx(x, y)];
-      if (o && ITEMS[o.id]) {
-        const p = proj(x, y);
-        drawObject(ITEMS[o.id], p.x, p.y, null);
-      }
     }
   }
 
-  drawHover();
-  drawParticles();
-}
-
-/* =========================================================
-   8. GAMEPLAY: PENEMPATAN, PENILAIAN
-   ========================================================= */
-function getSel() { return ITEMS[sel] || TOOLS[sel] || null; }
-
-function costOf(id) {
-  const it = ITEMS[id];
-  return it ? (it.cost || 0) : 0;
-}
-
-function countItem(id, layer) {
-  let n = 0;
-  if (layer === 'terrain') {
-    for (let i = 0; i < terrain.length; i++) if (terrain[i] === id) n++;
-  } else {
-    for (let i = 0; i < objects.length; i++) if (objects[i] && objects[i].id === id) n++;
-  }
-  return n;
-}
-
-function distinctKinds() {
-  const s = new Set();
-  for (const o of objects) if (o) s.add(o.id);
-  return s.size;
-}
-
-function dirtSum() {
-  let s = 0;
-  for (let i = 0; i < dirt.length; i++) s += dirt[i];
-  return s;
-}
-
-function cleanPct() {
-  if (!dirtTotal) return 1;
-  return clamp(1 - dirtSum() / dirtTotal, 0, 1);
-}
-
-function applyAt(t) {
-  if (!t) return false;
-  const i = idx(t.x, t.y);
-
-  /* --- alat bersih-bersih --- */
-  if (sel === 'clean') {
-    if (dirt[i] > 0.01) {
-      dirt[i] = Math.max(0, dirt[i] - 0.55);
-      sfx('clean');
-      const p = proj(t.x, t.y);
-      spawnSpark(p.x, p.y, '#bde59a', 2);
-      if (dirt[i] === 0) {
-        sfx('ding');
-        spawnSpark(p.x, p.y - 6, '#ffe9a8', 6);
-      }
-      afterChange();
-      return true;
-    }
-    return false;
-  }
-
-  /* --- penghapus objek --- */
-  if (sel === 'eraseObj') {
-    if (objects[i]) {
-      if (mode === 'challenge') budget += costOf(objects[i].id);
-      objects[i] = null;
-      sfx('erase');
-      afterChange();
-      return true;
-    }
-    return false;
-  }
-
-  /* --- penghapus lahan --- */
-  if (sel === 'eraseTerrain') {
-    if (terrain[i] !== 'grass') {
-      if (mode === 'challenge') budget += costOf(terrain[i]);
-      terrain[i] = 'grass';
-      sfx('erase');
-      afterChange();
-      return true;
-    }
-    return false;
-  }
-
-  const base = ITEMS[sel];
-  if (!base) return false;
-  const item = { ...base, id: sel };
-
-  /* --- lahan --- */
-  if (item.layer === 'terrain') {
-    if (terrain[i] === item.id) return false;
-    const net = mode === 'challenge' ? costOf(item.id) - costOf(terrain[i]) : 0;
-    if (mode === 'challenge' && net > budget) { sfx('error'); toast('Koin tidak cukup'); return false; }
-    if (mode === 'challenge') budget -= net;
-    terrain[i] = item.id;
-    sfx('place');
-    afterChange();
-    return true;
-  }
-
-  /* --- objek --- */
-  const old = objects[i];
-  if (old && old.id === item.id) return false;
-  const net = mode === 'challenge' ? costOf(item.id) - (old ? costOf(old.id) : 0) : 0;
-  if (mode === 'challenge' && net > budget) { sfx('error'); toast('Koin tidak cukup'); return false; }
-  if (mode === 'challenge') budget -= net;
-  objects[i] = { id: item.id };
-  sfx('place');
-  const p = proj(t.x, t.y);
-  spawnSpark(p.x, p.y - 8, '#ffe6a8', 4);
-  afterChange();
-  return true;
-}
-
-function afterChange() {
-  updateHud();
-  updateTask();
-  if (mode === 'sandbox') saveDesignDebounced();
-}
-
-/* ---------- Evaluasi tantangan ---------- */
-function evaluate() {
-  if (!challenge) return null;
-  const reqs = challenge.reqs.map(r => {
-    const n = countItem(r.id, r.layer || 'object');
-    return { label: r.label, need: r.n, have: n, ok: n >= r.n };
-  });
-  const allOk = reqs.every(r => r.ok);
-  const clean = cleanPct();
-  const kinds = distinctKinds();
-
-  let stars = 0;
-  if (allOk) stars = 1;
-  if (allOk && clean >= 0.999) stars = 2;
-  if (allOk && clean >= 0.999 && kinds >= 8) stars = 3;
-
-  const score = stars > 0
-    ? Math.round(500 + Math.max(0, budget) * 0.4 + kinds * 60 + clean * 400)
-    : 0;
-
-  return { reqs, allOk, clean, kinds, stars, score };
-}
-
-/* =========================================================
-   9. INPUT HANDLING
-   ========================================================= */
-function canvasPos(e) {
-  const r = cvs.getBoundingClientRect();
-  return { x: e.clientX - r.left, y: e.clientY - r.top };
-}
-
-function pickTile(e) {
-  const p = canvasPos(e);
-  return unproj(p.x, p.y);
-}
-
-function snapshot() {
   return {
-    terrain: terrain.slice(),
-    objects: objects.map(o => (o ? { ...o } : null)),
-    dirt: Array.from(dirt),
+    pos: new Float32Array(positions),
+    uv: new Float32Array(uvs),
+    light: new Float32Array(lights),
+    index: new Uint16Array(indices),
+    count: indices.length,
   };
 }
 
-function restore(s) {
-  terrain = s.terrain.slice();
-  objects = s.objects.map(o => (o ? { ...o } : null));
-  dirt = Float32Array.from(s.dirt);
-  afterChange();
+let meshData = { count: 0 };
+function updateWorldMesh() {
+  meshData = buildMesh();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, meshData.pos, gl.STATIC_DRAW);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, meshData.uv, gl.STATIC_DRAW);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, lightBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, meshData.light, gl.STATIC_DRAW);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, meshData.index, gl.STATIC_DRAW);
 }
-
-function pushUndo() {
-  undoStack.push(snapshot());
-  if (undoStack.length > MAX_UNDO) undoStack.shift();
-  redoStack.length = 0;
-  updateHud();
-}
-
-function undo() {
-  if (!undoStack.length) return;
-  redoStack.push(snapshot());
-  restore(undoStack.pop());
-  sfx('click');
-}
-
-function redo() {
-  if (!redoStack.length) return;
-  undoStack.push(snapshot());
-  restore(redoStack.pop());
-  sfx('click');
-}
-
-/* ---------- Pointer ---------- */
-cvs.addEventListener('pointerdown', e => {
-  audioInit();
-  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-  if (ptrs.size === 2) {
-    const arr = Array.from(ptrs.values());
-    const d = Math.hypot(arr[0].x - arr[1].x, arr[0].y - arr[1].y);
-    pinch = { d: d, zoom: cam.zoom };
-    painting = false;
-    return;
-  }
-  if (ptrs.size > 2) return;
-
-  if (e.button === 2 || e.button === 1 || e.shiftKey) {
-    pinch = { pan: true, x: e.clientX, y: e.clientY, px: cam.px, py: cam.py };
-    return;
-  }
-  if (gameState !== 'build') return;
-
-  const t = pickTile(e);
-  if (!t) return;
-
-  e.preventDefault();
-  pushUndo();
-  painting = true;
-  strokeChanged = false;
-  if (applyAt(t)) strokeChanged = true;
-  try { cvs.setPointerCapture(e.pointerId); } catch (err) {}
-});
-
-cvs.addEventListener('pointermove', e => {
-  const pos = canvasPos(e);
-  hover = unproj(pos.x, pos.y) || { x: -1, y: -1 };
-
-  if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-  if (ptrs.size >= 2 && pinch && pinch.d) {
-    const arr = Array.from(ptrs.values());
-    const d = Math.hypot(arr[0].x - arr[1].x, arr[0].y - arr[1].y);
-    if (d > 0) {
-      cam.zoom = clamp(pinch.zoom * (d / pinch.d), 0.42, 2.6);
-    }
-    return;
-  }
-
-  if (pinch && pinch.pan) {
-    cam.px = pinch.px + (e.clientX - pinch.x);
-    cam.py = pinch.py + (e.clientY - pinch.y);
-    return;
-  }
-
-  if (painting && gameState === 'build') {
-    const t = unproj(pos.x, pos.y);
-    if (t) {
-      if (applyAt(t)) strokeChanged = true;
-    }
-  }
-});
-
-function endPointer(e) {
-  ptrs.delete(e.pointerId);
-  if (ptrs.size < 2) pinch = null;
-  if (painting) {
-    painting = false;
-    if (!strokeChanged) undoStack.pop();
-    updateHud();
-  }
-}
-cvs.addEventListener('pointerup', endPointer);
-cvs.addEventListener('pointercancel', endPointer);
-cvs.addEventListener('contextmenu', e => e.preventDefault());
-
-/* ---------- Zoom roda mouse ---------- */
-cvs.addEventListener('wheel', e => {
-  e.preventDefault();
-  const p = canvasPos(e);
-  const wx = (p.x - W / 2 - cam.px) / cam.zoom;
-  const wy = (p.y - H * 0.52 - cam.py) / cam.zoom;
-  const nz = clamp(cam.zoom * (e.deltaY < 0 ? 1.12 : 0.89), 0.42, 2.6);
-  cam.zoom = nz;
-  cam.px = p.x - W / 2 - wx * nz;
-  cam.py = p.y - H * 0.52 - wy * nz;
-}, { passive: false });
-
-/* ---------- Keyboard ---------- */
-window.addEventListener('keydown', e => {
-  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); return; }
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
-  if (e.key === 'Escape') { openMenu(); }
-});
 
 /* =========================================================
-   10. UI: PALET, HUD, MODAL
+   9. RAYCASTING (Pilih & Pasang Blok)
+   ======================================================== */
+function raycast(ox, oy, oz, dx, dy, dz, maxDist) {
+  let cx = Math.floor(ox), cy = Math.floor(oy), cz = Math.floor(oz);
+  const stepX = dx > 0 ? 1 : -1;
+  const stepY = dy > 0 ? 1 : -1;
+  const stepZ = dz > 0 ? 1 : -1;
+
+  const tMaxX = stepX > 0 ? (cx + 1 - ox) / dx : (ox - cx) / Math.abs(dx);
+  const tMaxY = stepY > 0 ? (cy + 1 - oy) / dy : (oy - cy) / Math.abs(dy);
+  const tMaxZ = stepZ > 0 ? (cz + 1 - oz) / dz : (oz - cz) / Math.abs(dz);
+
+  const tDeltaX = Math.abs(1 / dx);
+  const tDeltaY = Math.abs(1 / dy);
+  const tDeltaZ = Math.abs(1 / dz);
+
+  let lx = cx, ly = cy, lz = cz;
+  let dist = 0;
+
+  while(dist < maxDist) {
+    if(getBlock(cx, cy, cz) !== 0) {
+      return { x: cx, y: cy, z: cz, lx, ly, lz };
+    }
+    lx = cx; ly = cy; lz = cz;
+    if(tMaxX < tMaxY && tMaxX < tMaxZ) {
+      cx += stepX; dist = tMaxX;
+    } else if(tMaxY < tMaxZ) {
+      cy += stepY; dist = tMaxY;
+    } else {
+      cz += stepZ; dist = tMaxZ;
+    }
+  }
+  return null;
+}
+
+/* =========================================================
+   10. RENDER LOOP
+   ========================================================= */
+function draw() {
+  gl.clearColor(0.55, 0.72, 0.88, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  if(meshData.count === 0) return;
+
+  let mat = mat4Perspective(Math.PI / 3, W / H, 0.1, 100.0);
+
+  if (mode === 'architect') {
+    // Kamera Isometrik memutari pusat dunia
+    const rx = camArch.cx + camArch.dist * Math.sin(camArch.yaw) * Math.cos(camArch.pitch);
+    const ry = camArch.cy + camArch.dist * Math.sin(camArch.pitch);
+    const rz = camArch.cz + camArch.dist * Math.cos(camArch.yaw) * Math.cos(camArch.pitch);
+
+    // LookAt matrix sederhana
+    mat = mat4Translate(mat, 0, 0, -camArch.dist);
+    mat = mat4RotateX(mat, camArch.pitch);
+    mat = mat4RotateY(mat, camArch.yaw);
+    mat = mat4Translate(mat, -camArch.cx, -camArch.cy, -camArch.cz);
+  } else {
+    // Kamera First-Person Walkthrough HD
+    mat = mat4RotateX(mat, player.pitch);
+    mat = mat4RotateY(mat, player.yaw);
+    mat = mat4Translate(mat, -player.x, -player.y, -player.z);
+  }
+
+  gl.uniformMatrix4fv(uMatLoc, false, new Float32Array(mat));
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+  gl.enableVertexAttribArray(posAttr);
+  gl.vertexAttribPointer(posAttr, 3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+  gl.enableVertexAttribArray(uvAttr);
+  gl.vertexAttribPointer(uvAttr, 2, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, lightBuffer);
+  gl.enableVertexAttribArray(lightAttr);
+  gl.vertexAttribPointer(lightAttr, 1, gl.FLOAT, false, 0, 0);
+
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, textureObj);
+  gl.uniform1i(uSamplerLoc, 0);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.drawElements(gl.TRIANGLES, meshData.count, gl.UNSIGNED_SHORT, 0);
+}
+
+/* =========================================================
+   11. CONTROLS & UI INTERACTION
    ========================================================= */
 const el = id => document.getElementById(id);
-const catRow = el('catRow'), itemRow = el('itemRow');
-const modeLabel = el('modeLabel'), budgetLabel = el('budgetLabel');
-const taskPanel = el('taskPanel');
 
-function itemsOfCat(c) {
-  if (c === 'bersih') return [TOOLS.clean];
-  if (c === 'hapus') return [TOOLS.eraseObj, TOOLS.eraseTerrain];
-  return Object.keys(ITEMS).filter(k => ITEMS[k].cat === c).map(k => ({ ...ITEMS[k], id: k }));
-}
+function renderPalette() {
+  el('catRow').innerHTML = CATS.map(c =>
+    `<button class="cat ${currentCat===c.id?'on':''}" data-cat="${c.id}">${c.icon} ${c.name}</button>`
+  ).join('');
 
-function renderCats() {
-  catRow.innerHTML = CATS.map(c => {
-    if (c.id === 'bersih' && mode !== 'challenge') return '';
-    const on = cat === c.id ? ' on' : '';
-    return '<button class="cat' + on + '" data-cat="' + c.id + '"><span>' + c.icon + '</span>' + c.name + '</button>';
+  const list = PALETTE.filter(p => p.cat === currentCat);
+  el('itemRow').innerHTML = list.map(p => {
+    const b = BLOCKS[Object.keys(BLOCKS).find(k => BLOCKS[k].id === p.id)];
+    return `<button class="item ${selBlock===p.id?'on':''}" data-id="${p.id}">
+      <span class="ico">${b.ico}</span><span class="nm">${b.name}</span>
+    </button>`;
   }).join('');
 }
 
-function renderItems() {
-  const list = itemsOfCat(cat);
-  itemRow.innerHTML = list.map(it => {
-    const on = sel === it.id ? ' on' : '';
-    let cost = '';
-    if (mode === 'challenge' && !it.tool && it.cost > 0) cost = '<span class="cost">🪙' + it.cost + '</span>';
-    return '<button class="item' + on + '" data-id="' + it.id + '"><span class="ico">' + it.icon +
-           '</span><span class="nm">' + it.name + '</span>' + cost + '</button>';
-  }).join('');
-}
-
-function selectCat(c) {
-  cat = c;
-  const list = itemsOfCat(c);
-  if (!list.some(it => it.id === sel)) sel = list.length ? list[0].id : sel;
-  renderCats();
-  renderItems();
-  sfx('click');
-}
-
-function selectItem(id) {
-  sel = id;
-  renderItems();
-  sfx('click');
-}
-
-catRow.addEventListener('click', e => {
+el('catRow').addEventListener('click', e => {
   const b = e.target.closest('[data-cat]');
-  if (b) selectCat(b.dataset.cat);
+  if(b) { currentCat = b.dataset.cat; renderPalette(); }
 });
-itemRow.addEventListener('click', e => {
+el('itemRow').addEventListener('click', e => {
   const b = e.target.closest('[data-id]');
-  if (b) selectItem(b.dataset.id);
+  if(b) { selBlock = parseInt(b.dataset.id, 10); renderPalette(); }
 });
 
-/* ---------- HUD ---------- */
-function updateHud() {
-  const canUndo = undoStack.length > 0;
-  const canRedo = redoStack.length > 0;
-  el('btnUndo').disabled = !canUndo;
-  el('btnRedo').disabled = !canRedo;
-
-  if (mode === 'challenge') {
-    budgetLabel.style.display = '';
-    budgetLabel.textContent = '🪙 ' + Math.max(0, Math.round(budget));
-    budgetLabel.classList.toggle('low', budget < 300);
-    modeLabel.textContent = challenge ? challenge.name : 'Tantangan';
+// Ganti Mode Architect <-> Walk
+el('btnMode').addEventListener('click', () => {
+  if (mode === 'architect') {
+    mode = 'walk';
+    player.x = SIZE / 2; player.y = 3.5; player.z = SIZE / 2;
+    player.yaw = 0; player.pitch = 0;
+    el('palette').classList.add('hidden');
+    el('crosshair').style.display = 'block';
+    el('walkHint').style.display = 'block';
+    el('btnMode').textContent = '🏗️ Mode Bangun';
+    toast('Masuk ke dalam rumah! Gunakan WASD / Tombol untuk jalan.');
   } else {
-    budgetLabel.style.display = 'none';
-    modeLabel.textContent = 'Mode Bebas';
+    mode = 'architect';
+    el('palette').classList.remove('hidden');
+    el('crosshair').style.display = 'none';
+    el('walkHint').style.display = 'none';
+    el('btnMode').textContent = '🚶‍♂️ Jelajah 3D';
+    toast('Kembali ke Mode Bangun.');
   }
-}
+});
 
-/* ---------- Panel tugas ---------- */
-function updateTask() {
-  if (mode !== 'challenge' || !challenge) { taskPanel.style.display = 'none'; return; }
-  taskPanel.style.display = 'block';
-  el('taskTitle').textContent = challenge.emoji + ' ' + challenge.name;
-  el('taskBrief').textContent = challenge.brief;
-
-  const fill = el('cleanFill');
-  fill.style.width = Math.round(cleanPct() * 100) + '%';
-
-  el('taskReqs').innerHTML = challenge.reqs.map(r => {
-    const n = countItem(r.id, r.layer || 'object');
-    const ok = n >= r.n;
-    return '<div class="req' + (ok ? ' ok' : '') + '"><span class="dot">' + (ok ? '✓' : '') + '</span>' +
-           r.label + '<span class="cnt">' + Math.min(n, r.n) + '/' + r.n + '</span></div>';
-  }).join('');
-}
-
-/* ---------- Toast ---------- */
 function toast(msg) {
   const t = el('toast');
   t.textContent = msg;
   t.classList.add('on');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('on'), 1600);
+  setTimeout(() => t.classList.remove('on'), 1800);
 }
 
-/* ---------- Modal helper ---------- */
-function openModal(id) { el(id).classList.add('open'); }
-function closeModal(id) { el(id).classList.remove('open'); }
-function closeAll() {
-  ['nameModal', 'menuModal', 'resultModal', 'lbModal'].forEach(closeModal);
-}
+/* Mouse & Touch Handling */
+let isDragging = false, lastX = 0, lastY = 0;
 
-/* ---------- Menu ---------- */
-function renderMenu() {
-  el('menuName').textContent = userName || '-';
-
-  let html = '<button class="modeCard" data-mode="sandbox">' +
-    '<div class="mcTitle">🧱 Mode Bebas</div>' +
-    '<div class="mcDesc">Papan kosong, semua item terbuka, tanpa biaya. Bangun sesukamu.</div>' +
-    '<div class="mcMeta">Sandbox · tanpa skor</div></button>';
-
-  html += CHALLENGES.map(c =>
-    '<button class="modeCard" data-ch="' + c.id + '">' +
-    '<div class="mcTitle">' + c.emoji + ' ' + c.name + '</div>' +
-    '<div class="mcDesc">' + c.brief + '</div>' +
-    '<div class="mcMeta">🪙 ' + c.budget + ' · ' + c.dirt + ' noda</div></button>'
-  ).join('');
-
-  el('modeGrid').innerHTML = html;
-}
-
-el('modeGrid').addEventListener('click', e => {
-  const sandbox = e.target.closest('[data-mode]');
-  if (sandbox) { startSandbox(); closeAll(); return; }
-  const ch = e.target.closest('[data-ch]');
-  if (ch) {
-    const c = CHALLENGES.find(x => x.id === ch.dataset.ch);
-    if (c) { startChallenge(c); closeAll(); }
-  }
-});
-
-function openMenu() {
-  if (!userName) { openNameModal(); return; }
-  renderMenu();
-  openModal('menuModal');
-}
-
-/* ---------- Username ---------- */
-let nameFirstTime = false;
-
-function openNameModal() {
-  nameFirstTime = !userName;
-  el('nameInput').value = userName || '';
-  openModal('nameModal');
-  setTimeout(() => el('nameInput').focus(), 60);
-}
-
-function confirmName() {
-  const v = sanitizeName(el('nameInput').value);
-  if (v.length < 1) { toast('Nama minimal 1 huruf'); return; }
-  userName = v;
-  saveUser(v);
-  sfx('coin');
-  closeModal('nameModal');
-  renderMenu();
-  openModal('menuModal');
-}
-
-el('btnNameOk').addEventListener('click', confirmName);
-el('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') confirmName(); });
-el('btnRename').addEventListener('click', () => { closeModal('menuModal'); openNameModal(); });
-el('btnCloseMenu').addEventListener('click', () => {
-  closeModal('menuModal');
-  if (mode) gameState = 'build';
-  updateHud();
-});
-el('btnMenu').addEventListener('click', openMenu);
-
-/* ---------- Papan baru ---------- */
-el('btnNewBoard').addEventListener('click', () => {
-  if (!confirm('Kosongkan papan dan mulai desain baru?')) return;
-  terrain = new Array(SIZE * SIZE).fill('grass');
-  objects = new Array(SIZE * SIZE).fill(null);
-  dirt = new Float32Array(SIZE * SIZE);
-  dirtTotal = 0;
-  undoStack = []; redoStack = [];
-  saveDesign();
-  afterChange();
-  closeModal('menuModal');
-  toast('Papan baru siap');
-});
-
-/* ---------- Leaderboard ---------- */
-function renderLB(container, highlightId) {
-  const list = loadLB();
-  if (!list.length) {
-    container.innerHTML = '<p style="opacity:.5;font-size:12.5px">Belum ada skor. Selesaikan tantangan untuk masuk papan peringkat.</p>';
+cvs.addEventListener('pointerdown', e => {
+  if (mode === 'walk') {
+    // Pointer lock untuk jalan-jalan
+    cvs.requestPointerLock();
     return;
   }
-  let html = '<table class="lb"><thead><tr><th>#</th><th>Arsitek</th><th>Tantangan</th><th>Tanggal</th><th style="text-align:right">Skor</th></tr></thead><tbody>';
-  list.forEach((e, i) => {
-    html += '<tr' + (highlightId && e.id === highlightId ? ' class="me"' : '') + '>' +
-      '<td>' + (i + 1) + '</td>' +
-      '<td>' + String(e.username || '-').replace(/[<>&]/g, '') + '</td>' +
-      '<td style="opacity:.6">' + String(e.mode || '-').replace(/[<>&]/g, '') + '</td>' +
-      '<td style="opacity:.5;font-size:11px">' + (e.date || '-') + '</td>' +
-      '<td class="sc">' + (e.score || 0) + '</td></tr>';
-  });
-  html += '</tbody></table>';
-  container.innerHTML = html;
-}
-
-el('btnLeaderboard').addEventListener('click', () => {
-  renderLB(el('lbBody'), null);
-  openModal('lbModal');
+  isDragging = true;
+  lastX = e.clientX; lastY = e.clientY;
 });
-el('btnLbClose').addEventListener('click', () => closeModal('lbModal'));
 
-/* ---------- Start mode ---------- */
-function resetBoard() {
-  terrain = new Array(SIZE * SIZE).fill('grass');
-  objects = new Array(SIZE * SIZE).fill(null);
-  dirt = new Float32Array(SIZE * SIZE);
-  dirtTotal = 0;
-  undoStack = []; redoStack = [];
-}
-
-function startSandbox() {
-  mode = 'sandbox';
-  challenge = null;
-  gameState = 'build';
-  resetBoard();
-  loadDesign();
-  dirtTotal = 0;
-  cat = 'lahan';
-  sel = 'grass';
-  renderCats(); renderItems();
-  updateHud(); updateTask();
-  el('btnDone').style.display = 'none';
-  toast('Mode Bebas — silakan membangun');
-}
-
-function makeDirt(n) {
-  let seed = 20261114;
-  const rnd = () => { seed = (Math.imul(seed, 1103515245) + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-  let placed = 0, guard = 0;
-  while (placed < n && guard++ < 800) {
-    const x = 1 + Math.floor(rnd() * (SIZE - 2));
-    const y = 1 + Math.floor(rnd() * (SIZE - 2));
-    const i = idx(x, y);
-    if (dirt[i] === 0) {
-      dirt[i] = 0.72 + rnd() * 0.28;
-      placed++;
-    }
+window.addEventListener('pointermove', e => {
+  if (mode === 'walk' && document.pointerLockElement === cvs) {
+    player.yaw -= e.movementX * 0.003;
+    player.pitch = Math.max(-1.4, Math.min(1.4, player.pitch - e.movementY * 0.003));
+    return;
   }
-  let sum = 0;
-  for (let i = 0; i < dirt.length; i++) sum += dirt[i];
-  dirtTotal = sum;
-}
-
-function startChallenge(c) {
-  mode = 'challenge';
-  challenge = c;
-  gameState = 'build';
-  resetBoard();
-  budget = c.budget;
-  startBudget = c.budget;
-  makeDirt(c.dirt);
-  cat = 'bersih';
-  sel = 'clean';
-  renderCats(); renderItems();
-  updateHud(); updateTask();
-  el('btnDone').style.display = '';
-  toast('Klien: ' + c.name + ' — bersihkan dulu, lalu bangun!');
-}
-
-/* ---------- Selesai / hasil ---------- */
-el('btnDone').addEventListener('click', () => {
-  const r = evaluate();
-  if (!r) return;
-  gameState = 'result';
-
-  const starsHtml = [0, 1, 2].map(i =>
-    '<span class="' + (i < r.stars ? 'on' : '') + '">★</span>'
-  ).join('');
-
-  el('resultTitle').textContent = r.stars > 0 ? 'Klien Senang!' : 'Belum Selesai';
-  el('resultStars').innerHTML = starsHtml;
-  el('resultScore').textContent = r.score;
-
-  let body = '<div style="font-size:12px;margin:12px 0 8px">';
-  body += '<div style="display:flex;justify-content:space-between;padding:4px 0"><span>Kebersihan</span><b>' + Math.round(r.clean * 100) + '%</b></div>';
-  body += '<div style="display:flex;justify-content:space-between;padding:4px 0"><span>Jenis item terpasang</span><b>' + r.kinds + '</b></div>';
-  body += '<div style="display:flex;justify-content:space-between;padding:4px 0"><span>Sisa anggaran</span><b>🪙 ' + Math.max(0, Math.round(budget)) + '</b></div>';
-  body += '</div><div style="margin-top:12px;font-size:12px">';
-  body += r.reqs.map(q =>
-    '<div class="req' + (q.ok ? ' ok' : '') + '" style="opacity:' + (q.ok ? 1 : 0.66) + '">' +
-    '<span class="dot">' + (q.ok ? '✓' : '') + '</span>' + q.label +
-    '<span class="cnt">' + Math.min(q.have, q.need) + '/' + q.need + '</span></div>'
-  ).join('');
-  body += '</div>';
-
-  if (r.stars > 0) {
-    if (r.stars < 3) {
-      const tip = r.clean < 0.999 ? 'Bersihkan semua noda untuk bintang tambahan.' : 'Tambahkan variasi item (min. 8 jenis) untuk bintang sempurna.';
-      body += '<p style="font-size:11px;opacity:.55;margin-top:10px">💡 ' + tip + '</p>';
-    }
-    const top = submitScore(r.score);
-    body += '<h3 style="font-size:12px;margin:16px 0 0;opacity:.55">🏆 Papan Peringkat</h3>';
-    body += '<div id="resultLB"></div>';
-    setTimeout(() => {
-      const c = document.getElementById('resultLB');
-      if (c) renderLB(c, null);
-    }, 0);
+  if (!isDragging || mode !== 'architect') return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  if (e.shiftKey) {
+    // Pan
+    camArch.cx -= dx * 0.02 * Math.cos(camArch.yaw);
+    camArch.cz += dx * 0.02 * Math.sin(camArch.yaw);
   } else {
-    body += '<p style="font-size:11.5px;opacity:.6;margin-top:12px">Lengkapi semua permintaan klien untuk menyelesaikan tantangan.</p>';
+    // Rotate
+    camArch.yaw -= dx * 0.01;
+    camArch.pitch = Math.max(0.1, Math.min(1.5, camArch.pitch + dy * 0.01));
   }
-
-  el('resultBody').innerHTML = body;
-  openModal('resultModal');
-  if (r.stars > 0) sfx('star'); else sfx('error');
 });
 
-el('btnResultAgain').addEventListener('click', () => {
-  closeModal('resultModal');
-  if (challenge) startChallenge(challenge);
-});
-el('btnResultMenu').addEventListener('click', () => {
-  closeModal('resultModal');
-  openMenu();
+window.addEventListener('pointerup', () => { isDragging = false; });
+
+cvs.addEventListener('wheel', e => {
+  if(mode === 'architect') {
+    camArch.dist = Math.max(8, Math.min(38, camArch.dist + e.deltaY * 0.03));
+  }
+}, {passive:true});
+
+// Klik pasang / Hapus blok di mode architect
+cvs.addEventListener('click', e => {
+  if(mode !== 'architect' || isDragging) return;
+  // Sederhana: klik tengah menaruh blok di atas lantai (y=1) atau atas objek
+  // Untuk versi cepat & solid, pasang di koordinat tengah grid
+  const x = Math.floor(SIZE / 2), z = Math.floor(SIZE / 2);
+  for(let y=1; y<WORLD_H; y++) {
+    if(getBlock(x, y, z) === 0) {
+      undoStack.push(new Uint8Array(world));
+      setBlock(x, y, z, selBlock);
+      updateWorldMesh();
+      saveDesign();
+      toast('Blok terpasang!');
+      break;
+    }
+  }
 });
 
-/* ---------- Simpan & foto ---------- */
-el('btnSave').addEventListener('click', () => {
-  if (mode === 'sandbox') { saveDesign(); toast('Desain tersimpan di browser'); sfx('coin'); }
-  else toast('Mode tantangan tidak perlu disimpan');
+// Keyboard walk
+window.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if(e.key === 'Escape') {
+    if(mode === 'walk') el('btnMode').click();
+  }
+});
+window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+el('btnUndo').addEventListener('click', () => {
+  if(undoStack.length === 0) { toast('Tidak ada riwayat undo'); return; }
+  world = undoStack.pop();
+  updateWorldMesh();
+  saveDesign();
+  toast('Undo berhasil!');
+});
+
+el('btnReset').addEventListener('click', () => {
+  if(confirm('Reset seluruh rumah?')) {
+    resetWorld();
+    updateWorldMesh();
+    toast('Rumah direset.');
+  }
 });
 
 el('btnPhoto').addEventListener('click', () => {
-  audioInit();
-  const out = document.createElement('canvas');
-  out.width = cvs.width;
-  out.height = cvs.height;
-  const g = out.getContext('2d');
-  g.fillStyle = '#101821';
-  g.fillRect(0, 0, out.width, out.height);
-  g.drawImage(cvs, 0, 0);
-
-  const pad = Math.round(out.width * 0.02);
-  g.fillStyle = 'rgba(0,0,0,.45)';
-  g.fillRect(0, out.height - pad * 3, out.width, pad * 3);
-  g.fillStyle = '#ffcf8a';
-  g.font = 'bold ' + Math.round(out.width * 0.018) + 'px Segoe UI, sans-serif';
-  g.fillText('Dream House', pad, out.height - pad * 1.35);
-  g.fillStyle = '#ffffff';
-  g.font = Math.round(out.width * 0.014) + 'px Segoe UI, sans-serif';
-  g.fillText('oleh ' + (userName || 'Arsitek'), pad, out.height - pad * 0.55);
-
+  const url = cvs.toDataURL('image/png');
   const a = document.createElement('a');
-  a.download = 'dream-house-' + Date.now() + '.png';
-  a.href = out.toDataURL('image/png');
+  a.download = 'dream-house-3d-' + Date.now() + '.png';
+  a.href = url;
   a.click();
-  toast('Foto diorama diunduh');
-  sfx('coin');
+  toast('Foto HD diunduh!');
 });
 
-/* ---------- Undo/redo/zoom ---------- */
-el('btnUndo').addEventListener('click', undo);
-el('btnRedo').addEventListener('click', redo);
-el('zoomIn').addEventListener('click', () => { cam.zoom = clamp(cam.zoom * 1.18, 0.42, 2.6); });
-el('zoomOut').addEventListener('click', () => { cam.zoom = clamp(cam.zoom * 0.85, 0.42, 2.6); });
-el('zoomReset').addEventListener('click', () => { resetView(); toast('Tampilan dipusatkan'); });
+// Start button
+el('btnStart').addEventListener('click', () => {
+  const name = document.getElementById('nameInput').value.trim();
+  if(!name) { toast('Masukkan nama dulu ya!'); return; }
+  userName = name;
+  try { localStorage.setItem(LS_USER, name); } catch(e){}
+  document.getElementById('nameModal').classList.remove('open');
+  toast('Selamat datang, Arsitek ' + name + '!');
+});
 
 /* =========================================================
-   11. MAIN GAME LOOP
+   12. MAIN LOOP
    ========================================================= */
-let lastTs = 0;
-
+let lastT = 0;
 function loop(ts) {
-  const dt = Math.min(0.05, (ts - lastTs) / 1000 || 0);
-  lastTs = ts;
-  time += dt;
-  updateParticles(dt);
+  const dt = Math.min(0.05, (ts - lastT) / 1000 || 0);
+  lastT = ts;
+
+  if (mode === 'walk') {
+    let speed = 4.5 * dt;
+    let dx = 0, dz = 0;
+    if (keys['w'] || keys['arrowup']) { dz -= speed; }
+    if (keys['s'] || keys['arrowdown']) { dz += speed; }
+    if (keys['a'] || keys['arrowleft']) { dx -= speed; }
+    if (keys['d'] || keys['arrowright']) { dx += speed; }
+
+    const sin = Math.sin(player.yaw), cos = Math.cos(player.yaw);
+    player.x += dx * cos - dz * sin;
+    player.z += dz * cos + dx * sin;
+
+    // Batas dinding dunia
+    player.x = Math.max(1, Math.min(SIZE - 1, player.x));
+    player.z = Math.max(1, Math.min(SIZE - 1, player.z));
+  }
+
   draw();
   requestAnimationFrame(loop);
 }
 
-/* ---------- INIT ---------- */
 function init() {
   resize();
   window.addEventListener('resize', resize);
-
-  userName = loadUser();
-
-  mode = 'sandbox';
-  challenge = null;
-  resetBoard();
+  initGL();
   loadDesign();
-  gameState = 'build';
+  updateWorldMesh();
+  renderPalette();
 
-  renderCats();
-  renderItems();
-  updateHud();
-  updateTask();
-  el('btnDone').style.display = 'none';
-
-  if (!userName) {
-    openNameModal();
-  } else {
-    renderMenu();
-    openModal('menuModal');
+  const saved = localStorage.getItem(LS_USER);
+  if(saved) {
+    userName = saved;
+    document.getElementById('nameModal').classList.remove('open');
   }
 
   requestAnimationFrame(loop);
