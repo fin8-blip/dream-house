@@ -1,119 +1,114 @@
-# PLAN.md — Dream House: Mini Architect
+# PLAN.md — Dream House 3D (Survival Walkthrough HD)
 
-Rencana kerja & log perkembangan game **Dream House** — mainan arsitektur mini berbasis petak isometrik dalam **1 file `index.html`**.
+Rencana kerja & log game **Dream House** — bangun rumah voxel, lalu **masuk dan jalan-jalan di dalamnya** dengan POV survival (jalan, lari, lompat, pasang/hancur blok). Semua dalam **1 file `index.html`** tanpa dependensi.
 
 ---
 
-## 1. Ikhtisar Game
+## 1. Ikhtisar
 
-- **Judul**: **Dream House** — *Mini Architect*
-- **Tagline**: "Susun rumah impianmu di atas papan petak."
-- **Genre**: Bangun & dekorasi (sandbox builder) isometrik 2.5D
-- **Format**: Single-File HTML (`index.html`), Vanilla JS + Canvas 2D, tanpa dependensi
-- **Kamera**: Isometrik 2.5D (diorama/maket), zoom + pan
-- **Mode**:
-  1. **Mode Bebas** — papan kosong, semua item terbuka, tanpa batas & tanpa skor
-  2. **Mode Tantangan** — brief klien + anggaran koin + mini-task bersih-bersih + bintang
+- **Judul**: Dream House 3D — Survival Walkthrough HD
+- **Genre**: Voxel sandbox / survival-walkthrough
+- **Format**: Single-File HTML, WebGL murni (shader ditulis manual), tanpa library
+- **Kamera**: First-person (POV survival), mouse look / pointer lock
+- **Dunia**: 24 × 12 × 24 blok
+- **Tekstur**: Atlas prosedural **64 px** (HD), 22 tile, mipmap
+- **Fisika**: Gravitasi, lompat, tabrakan AABB per-sumbu, step sub-frame
+- **Interaksi**: Raycast DDA — hancurkan (klik kiri), pasang (klik kanan), ambil blok (klik tengah)
+- **Kontrol**: WASD, Spasi, Shift, 1–9, E, F, Esc + joystick & tombol sentuh di HP
 - **Audio**: Web Audio API sintetis
-- **Penyimpanan**: LocalStorage (`arcade_last_username`, `arcade_leaderboard`, `dreamhouse_save_v1`)
-- **Kebijakan Caching**: Zero-Cache (`no-cache, no-store, must-revalidate`)
-- **Deployment**: GitHub Pages (repo baru, branch `main`, path `/`)
-- **Lokasi proyek**: folder `dream-house/` — game lama *Survival Block 3D* di root tetap utuh
+- **Penyimpanan**: LocalStorage (`dreamhouse_survival_world`, `dreamhouse_survival_user`)
+- **Kebijakan Caching**: Zero-Cache
+- **Deployment**: GitHub Pages — https://fin8-blip.github.io/dream-house/
 
 ---
 
-## 2. Keputusan Desain (Hasil Brainstorming)
+## 2. Keputusan Desain
 
 | Aspek | Keputusan |
 |---|---|
-| Judul | **Dream House** |
-| Tampilan papan | **Isometrik 2.5D** — terasa seperti maket mainan di atas meja |
-| Rasa permainan | **Santai**; timer tidak wajib |
-| Fokus versi pertama | **Mode Bebas + Mode Tantangan sekaligus** |
-| Mekanik bersih-bersih | **Dipertahankan** sebagai mini-task di awal Mode Tantangan |
-| Papan | Grid **14 × 14** petak, tiap petak punya lapisan lahan + objek |
-| Rotasi objek | Ditunda ke versi berikutnya |
+| Judul | Dream House |
+| Sudut pandang | First-person survival (bukan lagi isometrik) |
+| Gerakan | Jalan, lari, **lompat**, jatuh dengan gravitasi |
+| Blok | 19 jenis: struktur, alam, dan **furniture HD** |
+| Furniture | Blok tinggi parsial (kasur 0.5, sofa 0.55, meja 0.6, dst.) agar terlihat seperti barang, bukan kubus penuh |
+| Bangun | Pasang/hancur langsung dari POV pertama lewat crosshair |
+| Mode terbang | Toggle `F` untuk membangun lebih mudah |
+| Dunia awal | Rumah contoh lengkap dengan perabot, jalan setapak, dan tanaman |
 
 ---
 
 ## 3. Fase Pengembangan
 
 ### Phase 0: Brainstorming ✅
-- [x] Ide awal: game bersih-bersih ala House Flipper
-- [x] Pivot ke mainan arsitektur mini berbasis petak
-- [x] Judul disepakati: **Dream House**
-- [x] Tampilan isometrik 2.5D dipilih
-- [x] Mode Bebas + Tantangan disepakati
-- [x] Mini-task bersih-bersih dipertahankan untuk Mode Tantangan
+- [x] Ide awal game bersih-bersih ala House Flipper
+- [x] Pivot ke mainan arsitektur mini berbasis petak isometrik
+- [x] Judul **Dream House**
+- [x] Pivot ke 3D walkthrough
+- [x] **Pivot final: POV survival first-person + HD**
 
-### Phase 1: Kerangka Single-File ✅
-- [x] `index.html` dengan meta tag Zero-Cache
-- [x] Canvas fullscreen + `devicePixelRatio`
-- [x] Struktur 8 blok kode (config, audio, input, state, geometri, storage, render, loop)
+### Phase 1: Engine WebGL ✅
+- [x] Canvas fullscreen + devicePixelRatio
+- [x] Shader vertex/fragment manual (lighting per-face + fog)
+- [x] Atlas tekstur prosedural 64 px (22 tile) + mipmap
+- [x] Depth test, alpha discard untuk tanaman/lampu
 
-### Phase 2: Engine Isometrik ✅
-- [x] Proyeksi `screenX = (x-y)·TW/2`, `screenY = (x+y)·TH/2`
-- [x] Depth sorting berdasarkan `x + y`
-- [x] Alas/pedestal diorama + bayangan objek
-- [x] Kamera zoom (wheel/pinch) + pan (klik kanan / dua jari)
-- [x] Picking petak (layar → grid) untuk hover & penempatan
+### Phase 2: Dunia & Mesh ✅
+- [x] Grid 24×12×24 (`Uint8Array`)
+- [x] Mesh builder dengan face culling + dukungan blok tinggi parsial
+- [x] Indeks 32-bit (`OES_element_index_uint`) bila tersedia
+- [x] Rumah contoh: dinding bata, jendela kaca, pintu tinggi, atap melandai berundak, perabot
 
-### Phase 3: Bangun & Dekorasi ✅
-- [x] 30 item: lahan, struktur, furniture, halaman
-- [x] Penempatan klik & drag (gambar baris dinding sekaligus)
-- [x] Penghapus objek & penghapus lahan
-- [x] Undo / Redo (maks 80 langkah)
-- [x] Pratinjau hantu (ghost) saat hover
-- [x] Partikel kilau saat menaruh/ membersihkan
+### Phase 3: Fisika Survival ✅
+- [x] Gravitasi, kecepatan terminal, lompat 1.36 blok
+- [x] Tabrakan AABB per-sumbu dengan sub-step (anti-tembus)
+- [x] Deteksi `grounded` untuk lompat
+- [x] Batas dunia + respawn saat jatuh
+- [x] Mode terbang (F)
 
-### Phase 4: Mode Bebas ✅
-- [x] Papan kosong, semua item terbuka, tanpa biaya
-- [x] Simpan otomatis ke `dreamhouse_save_v1`
-- [x] Papan Baru (reset)
-- [x] Foto diorama (unduh PNG dengan cap nama)
+### Phase 4: Interaksi ✅
+- [x] Raycast DDA (jarak 6 blok)
+- [x] Outline blok target
+- [x] Hancurkan / pasang / ambil blok
+- [x] Cegah menaruh blok di dalam tubuh pemain
+- [x] Undo (Ctrl+Z / tombol)
+- [x] Simpan otomatis ke LocalStorage
 
-### Phase 5: Mode Tantangan ✅
-- [x] 3 tantangan: Rumah Mungil, Villa Pantai, Rumah Keluarga
-- [x] Sistem anggaran koin (biaya per item, refund saat dihapus)
-- [x] Mini-task bersih-bersih (noda petak, spons, 2 kali gosok)
-- [x] Checklist permintaan klien live
-- [x] Penilaian bintang 1–3 + skor
-- [x] Papan peringkat Top 10 per tantangan
+### Phase 5: UI ✅
+- [x] Hotbar 9 slot + angka 1–9 + scroll
+- [x] Katalog blok (E) untuk mengganti isi slot
+- [x] Crosshair, hint kontrol, toast
+- [x] Pause overlay + pointer lock
+- [x] Foto PNG
 
-### Phase 6: Identitas & UI ✅
-- [x] Modal username (validasi 1–15 karakter, sanitasi XSS)
-- [x] Menu utama: Mode Bebas, daftar tantangan, papan peringkat, ganti nama
-- [x] HUD: mode, koin, undo/redo, foto, simpan, selesai
-- [x] Panel checklist tantangan
-- [x] Palet kategori + item dengan ikon & harga
-- [x] Responsif HP/tablet (palet scroll, pinch zoom)
+### Phase 6: Mobile ✅
+- [x] Deteksi perangkat sentuh
+- [x] Joystick kiri, geser layar untuk melihat
+- [x] Tombol LOMPAT / PASANG / HANCUR
+- [x] FOV adaptif untuk layar portrait
 
-### Phase 7: Publikasi
-- [ ] Inisialisasi repo baru `dream-house`
-- [ ] Push ke GitHub publik
-- [ ] Aktifkan GitHub Pages
-- [ ] Verifikasi live + zero-cache
+### Phase 7: Publikasi ✅
+- [x] Repo publik `fin8-blip/dream-house`
+- [x] GitHub Pages aktif (branch `main`, root)
+- [x] Zero-cache
 
 ---
 
 ## 4. Matriks Tugas
 
-| ID | Tugas | Fase | Status |
-| :--- | :--- | :--- | :--- |
-| T-01 | Engine isometrik + picking petak | Phase 2 | `DONE` |
-| T-02 | Katalog 30 item + render prosedural | Phase 3 | `DONE` |
-| T-03 | Penempatan, drag-paint, undo/redo | Phase 3 | `DONE` |
-| T-04 | Mode Bebas + simpan lokal | Phase 4 | `DONE` |
-| T-05 | Mode Tantangan + anggaran + bintang | Phase 5 | `DONE` |
-| T-06 | Mini-task bersih-bersih | Phase 5 | `DONE` |
-| T-07 | Username + leaderboard Top 10 | Phase 6 | `DONE` |
-| T-08 | Foto diorama | Phase 4 | `DONE` |
-| T-09 | Kontrol sentuh & UI responsif | Phase 6 | `DONE` |
-| T-10 | Deploy GitHub Pages | Phase 7 | `TODO` |
-| T-11 | Rotasi objek 4 arah | v1.1 | `TODO` |
-| T-12 | Siang/malam + lampu menyala | v1.1 | `TODO` |
-| T-13 | Galeri rumah & katalog terbuka | v1.2 | `TODO` |
-| T-14 | Tema rumah (pantai, Jepang, Skandinavia) | v2 | `TODO` |
+| ID | Tugas | Status |
+| :--- | :--- | :--- |
+| T-01 | Engine WebGL + shader + atlas HD | `DONE` |
+| T-02 | Mesh builder dengan tinggi blok parsial | `DONE` |
+| T-03 | Fisika gravitasi, lompat, tabrakan | `DONE` |
+| T-04 | Raycast & pasang/hancur blok | `DONE` |
+| T-05 | Hotbar + katalog + undo | `DONE` |
+| T-06 | Rumah contoh + perabot HD | `DONE` |
+| T-07 | Kontrol sentuh HP | `DONE` |
+| T-08 | Simpan lokal + foto | `DONE` |
+| T-09 | Deploy GitHub Pages | `DONE` |
+| T-10 | Siklus siang/malam | `TODO` |
+| T-11 | Sistem hari/uang & misi klien | `TODO` |
+| T-12 | Multi-lantai & tangga | `TODO` |
 
 ---
 
@@ -121,4 +116,6 @@ Rencana kerja & log perkembangan game **Dream House** — mainan arsitektur mini
 
 | Versi | Tanggal | Ringkasan |
 | :--- | :--- | :--- |
-| **v1.0.0** | 2026-11-14 | Rilis pertama: engine isometrik 14×14, 30 item, Mode Bebas & 3 Tantangan, mini-task bersih-bersih, anggaran koin, bintang, username, leaderboard, simpan lokal, foto diorama, kontrol sentuh |
+| **v3.0.0** | 2026-11-14 | Pivot ke POV survival first-person: gravitasi, jalan/lari/lompat, tabrakan AABB, raycast pasang & hancur blok, 19 blok termasuk furniture HD, tekstur 64 px, fog & lighting, hotbar + katalog, mode terbang, kontrol sentuh, rumah contoh lengkap |
+| v2.0.0 | 2026-11-14 | Upgrade ke 3D WebGL (walkthrough + architect isometrik) |
+| v1.0.0 | 2026-11-14 | Rilis isometrik 2.5D: 27 item, Mode Bebas & Tantangan, leaderboard |
