@@ -1,81 +1,77 @@
-# PLAN.md — Dream House Flipper 3D
+# PLAN.md — Dream House Flipper 3D (Realistic Interior)
 
-Game renovasi rumah **House Flipper-style** dalam **1 file `index.html`**: masuk ke rumah kotor, bersihkan, tambal dinding retak, cat ulang, isi furnitur, lalu selesaikan pekerjaan dan raih bintang.
+Game renovasi rumah ala **House Flipper**: masuk ke rumah, bersihkan kotoran, cat dinding, dan dekorasi ruangan dengan furnitur. Bukan voxel — memakai interior low-poly dengan dinding tipis, pintu, jendela, plafon, dan perabot halus.
 
 ---
 
 ## 1. Ikhtisar
 
 - **Judul**: Dream House — House Flipper 3D
-- **Genre**: Renovation sim / first-person sandbox
-- **Format**: Single-File HTML, WebGL murni (tanpa library)
-- **Kamera**: First-person survival (jalan, lari, lompat, gravitasi, tabrakan)
-- **Dunia**: 24 × 12 × 24 blok
-- **Tekstur**: Atlas prosedural **64 px**, 26 tile, mipmap
-- **Sistem kotor**: layer `grime` per blok yang memengaruhi warna lewat shader
-- **Alat**: Spons (gosok), Perbaiki (tambal retak), Cat (3 warna), Furnitur
-- **Ekonomi**: anggaran renovasi 🪙 9.000
+- **Format**: Single-File HTML, WebGL murni (tanpa library/aset eksternal)
+- **Kamera**: First-person (jalan, lari, lompat, tabrakan)
+- **Rumah**: 5 ruang — Ruang Tamu, Kamar Tidur, Dapur, Kamar Mandi, Lorong
+- **Geometri**: bukan blok — dinding tipis 14 cm, bukaan pintu/jendela, plafon, plint
+- **Perabot**: 12 model prosedural (sofa, kasur, lemari, TV, meja, rak, tanaman, dll.)
+- **Kotoran**: 634 sel permukaan dengan tekstur noda, dibersihkan per area
+- **Cat**: 4 warna (Krem, Hijau, Biru, Terracotta)
+- **Ekonomi**: anggaran renovasi 🪙 12.000
 - **Audio**: Web Audio API sintetis
-- **Penyimpanan**: LocalStorage (`dhf_world_v1`, `dhf_user`)
 - **Deployment**: https://fin8-blip.github.io/dream-house/
 
 ---
 
-## 2. Alur Permainan (House Flipper)
+## 2. Alur Permainan
 
-1. **Terima pekerjaan** — rumah tua Pak Budi, kotor dan retak.
-2. **Bersihkan** — gosok dinding & lantai dengan spons (radius 1,5 blok per gosokan).
-3. **Perbaiki** — tambal 8 titik dinding retak.
-4. **Cat** — pilih salah satu dari 3 warna, cat dinding.
-5. **Dekorasi** — beli & tempatkan furnitur sesuai anggaran.
-6. **Selesaikan** — dapat bintang 1–3 dan skor akhir.
+1. **Masuk rumah** — interior kotor, lantai kayu, dinding penuh noda.
+2. **Bersihkan** 🧽 — gosok dinding/lantai/jendela; noda memudar per area.
+3. **Cat dinding** 🎨 — pilih warna, arahkan ke dinding, klik.
+4. **Dekorasi** 🛋️ — pilih furnitur dari katalog, putar dengan R, taruh di lantai.
+5. **Selesaikan** ⭐ — nilai kebersihan, jumlah dinding dicat, furnitur, sisa anggaran.
 
 ---
 
-## 3. Sistem Penilaian
+## 3. Penilaian
 
-| Komponen | Bobot |
+| Komponen | Nilai |
 |---|---|
-| Kebersihan (grime tersisa) | 1.000 |
-| Retak ditambal | 120 / titik |
-| Dinding dicat | 70 / blok |
-| Furnitur terpasang | 160 / item |
-| Sisa anggaran | 0,25 / koin |
+| Kebersihan | 1.000 |
+| Dinding dicat | 120 / segmen |
+| Furnitur | 150 / item |
+| Sisa anggaran | 0,2 / koin |
 
-**Bintang:**
+**Bintang**
 - ★ — kebersihan ≥ 60%
-- ★★ — kebersihan ≥ 85% **dan** semua retak ditambal
-- ★★★ — kebersihan ≥ 97% + semua retak + ≥10 dinding dicat + ≥5 furnitur
+- ★★ — kebersihan ≥ 85% + ≥ 4 furnitur
+- ★★★ — kebersihan ≥ 97% + ≥ 6 furnitur + ≥ 4 dinding dicat
 
 ---
 
-## 4. Alat & Harga
+## 4. Furnitur & Harga
 
-| Alat | Fungsi |
+| Item | Harga |
 |---|---|
-| 🧽 Spons | Menggosok kotoran (radius 1,5 blok) |
-| 🔨 Perbaiki | Mengubah dinding retak → dinding normal |
-| 🎨 Cat Krim / Hijau / Biru | Mewarnai dinding |
-| 🛏️ Kasur | 🪙 600 |
-| 🛋️ Sofa | 🪙 500 |
-| 🍽️ Meja | 🪙 300 |
-| 🪑 Kursi | 🪙 150 |
-| 📚 Rak Buku | 🪙 350 |
-| 📺 TV | 🪙 450 |
-| 🪴 Tanaman | 🪙 120 |
-| 💡 Lampu | 🪙 200 |
-| 🟥 Karpet | 🪙 150 |
-| 🍳 Dapur | 🪙 700 |
+| Sofa | 🪙 1.200 |
+| Kursi Malas | 🪙 650 |
+| Meja Kopi | 🪙 450 |
+| TV | 🪙 900 |
+| Kasur | 🪙 1.600 |
+| Lemari | 🪙 1.400 |
+| Meja Kerja | 🪙 700 |
+| Kursi | 🪙 300 |
+| Karpet | 🪙 400 |
+| Lampu Lantai | 🪙 450 |
+| Tanaman | 🪙 350 |
+| Rak Buku | 🪙 800 |
 
 ---
 
 ## 5. Kontrol
 
 - **WASD** jalan · **Shift** lari · **Spasi** lompat
-- **Klik Kiri** pakai alat · **Klik Kanan** bongkar blok
-- **1–9** ganti alat · **Scroll** ganti slot
-- **E** katalog · **F** terbang · **Esc** jeda · **Ctrl+Z** undo
-- **HP**: joystick kiri, geser layar untuk melihat, tombol LOMPAT / PAKAI / BONGKAR
+- **Klik Kiri** pakai alat · **R** putar furnitur
+- **1–9** ganti alat · **E** katalog
+- **F** terbang · **Esc** jeda
+- **HP**: joystick + tombol LOMPAT / PAKAI / PUTAR
 
 ---
 
@@ -83,19 +79,19 @@ Game renovasi rumah **House Flipper-style** dalam **1 file `index.html`**: masuk
 
 | ID | Tugas | Status |
 | :--- | :--- | :--- |
-| T-01 | Engine WebGL + atlas HD 64 px | `DONE` |
-| T-02 | Sistem grime per blok (shader tint) | `DONE` |
-| T-03 | Fisika survival: jalan, lompat, tabrakan | `DONE` |
-| T-04 | Alat spons, perbaikan, cat 3 warna | `DONE` |
-| T-05 | Penempatan furnitur + anggaran | `DONE` |
-| T-06 | Panel pekerjaan & progres live | `DONE` |
-| T-07 | Penilaian bintang & skor | `DONE` |
-| T-08 | Kontrol sentuh HP | `DONE` |
-| T-09 | Simpan lokal + undo + foto | `DONE` |
+| T-01 | Engine polygon (bukan voxel) + shader | `DONE` |
+| T-02 | Rumah 5 ruang: dinding, pintu, jendela, plafon, plint | `DONE` |
+| T-03 | 12 model furnitur prosedural | `DONE` |
+| T-04 | Sistem kotoran per sel + spons | `DONE` |
+| T-05 | Cat 4 warna per segmen dinding | `DONE` |
+| T-06 | Penempatan furnitur + rotasi + tabrakan | `DONE` |
+| T-07 | Panel pekerjaan & bintang | `DONE` |
+| T-08 | Fisika first-person & collider | `DONE` |
+| T-09 | UI responsif + kontrol sentuh | `DONE` |
 | T-10 | Deploy GitHub Pages | `DONE` |
-| T-11 | Beberapa rumah / level klien | `TODO` |
-| T-12 | Toko upgrade alat | `TODO` |
-| T-13 | Siklus siang/malam | `TODO` |
+| T-11 | Beberapa rumah/klien berbeda | `TODO` |
+| T-12 | Toko & upgrade alat | `TODO` |
+| T-13 | Pencahayaan siang/malam | `TODO` |
 
 ---
 
@@ -103,7 +99,7 @@ Game renovasi rumah **House Flipper-style** dalam **1 file `index.html`**: masuk
 
 | Versi | Tanggal | Ringkasan |
 | :--- | :--- | :--- |
-| **v4.0.0** | 2026-11-14 | **House Flipper mode**: layer kotoran (grime) dengan tint shader, spons radius, tambal retak, cat 3 warna, furnitur berbayar, panel pekerjaan, penilaian bintang, rumah contoh kotor |
-| v3.0.0 | 2026-11-14 | POV survival first-person: gravitasi, lompat, tabrakan, pasang/hancur blok, 19 blok, tekstur 64 px |
-| v2.0.0 | 2026-11-14 | 3D WebGL walkthrough + isometrik |
-| v1.0.0 | 2026-11-14 | Isometrik 2.5D, 27 item, leaderboard |
+| **v5.0.0** | 2026-11-14 | **Interior realistis**: ganti voxel dengan geometri polygon (dinding tipis, pintu, jendela, plafon, plint), 12 furnitur prosedural halus, sistem kotoran 634 sel dengan tekstur noda, cat 4 warna, panel pekerjaan & bintang, collider lantai/dinding/furnitur |
+| v4.0.0 | 2026-11-14 | House Flipper voxel: grime per blok, spons, tambal retak, cat |
+| v3.0.0 | 2026-11-14 | Survival first-person voxel |
+| v1.0.0 | 2026-11-14 | Isometrik 2.5D |
